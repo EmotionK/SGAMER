@@ -28,7 +28,15 @@ def binary(ratings,dataset_name):
 def get_user_items_num_data(data):
 
     c_user = Counter(data['userId']) #统计userId出现的数量
-    most_user = c_user.most_common(1450)  # 5128
+
+    user_12_number = 0
+    for key,value in c_user.items():
+        if value>=12:
+            user_12_number += 1
+
+    print(f'over 12 interaction user number:{user_12_number}')
+
+    most_user = c_user.most_common(user_12_number)  # 5128
     select_users = [i[0] for i in most_user]  # 用户列表
 
     data_filter_user = data[data['userId'].isin(select_users)]  # 获得选择的用户存在的数据
@@ -259,7 +267,7 @@ def refine_user_item_category_brand_item():
     user_rate_item_df.to_csv(f'./data/{dataset_name}/new_data.csv', header=None, sep=',', index=False)
     print(f'generic id finish')
 
-    return len(user_set),len(item_set),user_rate_item_df,len(all_nodes)
+    return len(user_set),len(item_set),user_rate_item_df,len(all_nodes),len(category_set),len(brand_set)
 
 #generate graph
 def gen_graph(all_node_number):
@@ -420,7 +428,7 @@ def data_processing(datasetName):
 
     get_user_items_num_data(data) #获取与用户交互的最近的12个item的整体数据
     get_item_meta()  # get items metas 获取每个项目的category、brand、also_buy
-    user_number,item_number,new_data,all_node_number = refine_user_item_category_brand_item() ##根据user_ratings_item.csv提炼item_category.csv,item_brand.csv,item_item.csv
+    user_number,item_number,new_data,all_node_number,category_number,brand_number = refine_user_item_category_brand_item() ##根据user_ratings_item.csv提炼item_category.csv,item_brand.csv,item_item.csv
     gen_graph(all_node_number) #generate graph
     gen_ui_history()#user history
     split_train_test()#split_train_test
@@ -430,7 +438,7 @@ def data_processing(datasetName):
     pos_samples_idx_dict, neg_samples_idx_dict = get_pos_neg_sample_for_user(user_item_interaction_matrix, user_number)#为每个用户创建正例和负例
 
     print('\n -------Data Prep Finished, Starting Training--------')
-    return user_number,item_number,pos_samples_idx_dict, neg_samples_idx_dict
+    return user_number,item_number,pos_samples_idx_dict, neg_samples_idx_dict,category_number,brand_number
 
 
 
