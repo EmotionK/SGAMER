@@ -19,8 +19,8 @@ import torch
 from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
-if __name__ == '__main__':
-    dataset_name = 'Amazon_Musical_Instruments'
+def embedding_category_brand(dataset_name):
+    # dataset_name = 'Amazon_Musical_Instruments'
     number_walks = 10
     walk_length = 6  # length of path
     workers = 2
