@@ -163,7 +163,6 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
             pos_id = len(scores) - 1 #正例在scores中的位置
             s = np.array(scores)
             sorted_s = np.argsort(-s)# 分数的位置从大到小排序
-            normalized_scores.sort(reverse=True)
 
             if sorted_s[0] == pos_id:
                 hit_num_1 += 1

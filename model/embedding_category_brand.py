@@ -19,8 +19,7 @@ import torch
 from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
-if __name__ == '__main__':
-    dataset_name = 'Amazon_Musical_Instruments'
+def embedding_category_brand(dataset_name,user_number,item_number):
     number_walks = 10
     walk_length = 6  # length of path
     workers = 2
@@ -66,13 +65,13 @@ if __name__ == '__main__':
     user_embedding = pickle.load(open(f'../data/{dataset_name}/torch.user_embedding','rb'))
     user_embedding = torch.reshape(user_embedding,(-1,192))
     print(f'user_embedding_shape:{user_embedding.shape}')
-    for j in range(1450):
+    for j in range(user_number):
         nodewv_dic[i] = torch.Tensor(user_embedding[j])
         i += 1
 
     item_embedding = pickle.load(open(f'../data/{dataset_name}/torch.item_embedding', 'rb'))
     print(f'item_embedding_shape:{item_embedding.shape}')
-    for k in range(9029):
+    for k in range(item_number):
         item_embedding_list = item_embedding[k].tolist()
         item_embedding_fill = item_embedding_list + item_embedding_list + item_embedding_list
         nodewv_dic[i] = torch.Tensor(item_embedding_fill)
