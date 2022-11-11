@@ -1,5 +1,5 @@
 #encoding=utf-8
-import torch.tensor
+import torch
 from collections import defaultdict
 import pickle
 import pandas as pd

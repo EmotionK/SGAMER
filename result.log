@@ -1,0 +1,19 @@
+nohup: ignoring input
+cuda
+run.py device: cuda
+Amazon_Musical_Instruments data processing.....
+device: cuda
+(1512530, 4)
+over 12 interaction user number:5128
+saved items meta to folder: ./data/Amazon_Musical_Instruments
+user_number=1450
+item_number=9029
+category_number=540
+brand_number=1815
+all_nodes_number=12834
+all_nodes_set_number=12834
+generic id finish
+89113
+edges:  15119
+save neg 5 sampled links ... finish
+save neg 100 sampled links ... finish

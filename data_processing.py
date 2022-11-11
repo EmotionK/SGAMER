@@ -35,6 +35,8 @@ def get_user_items_num_data(data):
             user_12_number += 1
 
     print(f'over 12 interaction user number:{user_12_number}')
+    
+    user_12_number = 1450
 
     most_user = c_user.most_common(user_12_number)  # 5128
     select_users = [i[0] for i in most_user]  # 用户列表

@@ -19,20 +19,15 @@ import torch
 from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
-<<<<<<< HEAD
-def embedding_category_brand(dataset_name):
-    # dataset_name = 'Amazon_Musical_Instruments'
-=======
 def embedding_category_brand(dataset_name,user_number,item_number):
->>>>>>> 017a7ca8c60f5ffca9dab345a0b621bda60778ff
     number_walks = 10
     walk_length = 6  # length of path
     workers = 2
     representation_size = 192
     window_size = 3
-    output = f'../data/{dataset_name}/node.wv'
-    G = pickle.load(open(f'../data/{dataset_name}/graph.nx', 'rb'))  # node 包括 user/item/brand/category/also_bought
-    walks_filebase = f'../data/{dataset_name}/walks.txt'
+    output = f'./data/{dataset_name}/node.wv'
+    G = pickle.load(open(f'./data/{dataset_name}/graph.nx', 'rb'))  # node 包括 user/item/brand/category/also_bought
+    walks_filebase = f'./data/{dataset_name}/walks.txt'
     nodewv = f'../data/{dataset_name}/nodewv.dic'
     print("Number of nodes: {}".format(G.number_of_nodes()))
     print("Number of edges: {}".format(G.number_of_edges()))
@@ -67,14 +62,14 @@ def embedding_category_brand(dataset_name,user_number,item_number):
             nodewv_dic[nodeid] = torch.Tensor(fea)
 
     i = 0
-    user_embedding = pickle.load(open(f'../data/{dataset_name}/torch.user_embedding','rb'))
+    user_embedding = pickle.load(open(f'./data/{dataset_name}/torch.user_embedding','rb'))
     user_embedding = torch.reshape(user_embedding,(-1,192))
     print(f'user_embedding_shape:{user_embedding.shape}')
     for j in range(user_number):
         nodewv_dic[i] = torch.Tensor(user_embedding[j])
         i += 1
 
-    item_embedding = pickle.load(open(f'../data/{dataset_name}/torch.item_embedding', 'rb'))
+    item_embedding = pickle.load(open(f'./data/{dataset_name}/torch.item_embedding', 'rb'))
     print(f'item_embedding_shape:{item_embedding.shape}')
     for k in range(item_number):
         item_embedding_list = item_embedding[k].tolist()
