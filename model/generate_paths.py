@@ -838,27 +838,32 @@ def form_ii_paths(user_history_file, metapaths_folder, output_filename, metapath
     print(avg_randomed)
 
 
-
-def gen_instances(dataset_name,user_number,item_number,category_number,brand_number):
-    refinefolder = f'./data/{dataset_name}/'
-    ic_relation_file = refinefolder + 'item_category.relation'
-    ib_relation_file = refinefolder + 'item_brand.relation'
-    ui_relation_file = refinefolder + 'user_item.relation'
-    user_history_file = refinefolder + 'user_history.txt'
-    node_emb_dic = refinefolder + 'nodewv.dic'
+dataset_name='Amazon_Musical_Instruments'
+user_number = 1450
+item_number = 9029
+category_number = 540
+brand_number = 1815
+if __name__ == '__main__':
+#def gen_instances(dataset_name,user_number,item_number,category_number,brand_number):
+    folder = f'../data/{dataset_name}/'
+    ic_relation_file = folder + 'item_category.relation'
+    ib_relation_file = folder + 'item_brand.relation'
+    ui_relation_file = folder + 'user_item.relation'
+    user_history_file = folder + 'user_history.txt'
+    node_emb_dic = folder + 'nodewv.dic'
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapahts_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
-    output_filename = refinefolder + 'ii_random_form.paths'
+    output_filename = folder + 'ii_random_form.paths'
 
     UIPath(ib_relation_file=ib_relation_file, ic_relation_file=ic_relation_file,
                            ui_relation_file=ui_relation_file,
                            metapath_list=ui_metapaths_list,node_emb_dic=node_emb_dic,
            usize=user_number, isize=item_number, csize=category_number, bsize=brand_number,
-           outputfolder=refinefolder)
+           outputfolder=folder)
     IIPath(ib_relation_file=ib_relation_file, ic_relation_file=ic_relation_file,
                            ui_relation_file=ui_relation_file, user_history_file=user_history_file,
            node_emb_dic=node_emb_dic, metapath_list=ii_metapahts_list,
            usize=user_number, isize=item_number, csize=category_number, bsize=brand_number,
-           outputfolder=refinefolder)
-    form_ii_paths(user_history_file, refinefolder, output_filename, ii_metapahts_list)
+           outputfolder=folder)
+    form_ii_paths(user_history_file, folder, output_filename, ii_metapahts_list)
 

@@ -71,18 +71,23 @@ def instance_emb(metapath_file, output_file):
     pickle.dump(ui_path_vectors, open(output_file, 'wb'))
 
 
-def meta_path_instances_representation(dataset_name):
+dataset_name='Amazon_Musical_Instruments'
+
+if __name__ == '__main__':
+#def meta_path_instances_representation(dataset_name):
+    folder = f'../data/{dataset_name}/'
+
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapaths_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     # ii form
     # embed ui paths
     for metapath in ui_metapaths_list:
-        metapath_file = f'./data/{dataset_name}/' + metapath + '.paths'
-        output_file = f'./data/{dataset_name}/' + metapath + '.wv'
+        metapath_file = folder + metapath + '.paths'
+        output_file = folder + metapath + '.wv'
         instance_emb(metapath_file, output_file)
     # embed ii paths
-    ii_instance_file = f'./data/{dataset_name}/ii_random_form.paths'
-    output_ii_emb_file = f'./data/{dataset_name}/ii_random_form.wv'
+    ii_instance_file = folder + 'ii_random_form.paths'
+    output_ii_emb_file = folder + 'ii_random_form.wv'
     # we randomly select 1 path from 7 item-item instances to generate 'this ii_random_form.wv', and then the following attention
     instance_emb(ii_instance_file, output_ii_emb_file)
 

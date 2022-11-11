@@ -24,7 +24,13 @@ import torch
 import pickle
 from collections import defaultdict
 
-def user_history(dataset_name):
+
+dataset_name='Amazon_Musical_Instruments'
+
+if __name__ == '__main__':
+#def user_history(dataset_name):
+
+    folder = f'../data/{dataset_name}/'
     bridge = 2
     train = 4
     test = 6
@@ -36,7 +42,7 @@ def user_history(dataset_name):
     """
     把nodewv转化为dic,或者是tensor
     """
-    nodewv = f'./data/{dataset_name}/node.wv'
+    nodewv = folder + 'node.wv'
 
     nodewv_dic = defaultdict(torch.Tensor)
     with open(nodewv, 'r') as f:
@@ -49,7 +55,7 @@ def user_history(dataset_name):
 
     print("node.feature done")
     print(len(nodewv_dic))  # 26333
-    user_history_edges2id = pickle.load(open(f'./data/{dataset_name}/user_history.edges2id', 'rb'))
+    user_history_edges2id = pickle.load(open(folder + 'user_history.edges2id', 'rb'))
 
     """
     转化为 dic,tensor
@@ -57,7 +63,7 @@ def user_history(dataset_name):
 
     ##################################
     item_item_wv_dic = defaultdict(torch.Tensor)
-    with open(f'./data/{dataset_name}/item_item.wv', 'r') as f:
+    with open(folder + 'item_item.wv', 'r') as f:
         f.readline()
         for line in f:
             s = line.split()
@@ -68,7 +74,7 @@ def user_history(dataset_name):
     print(len(item_item_wv_dic))
 
     user_history_wv = defaultdict(torch.Tensor)
-    with open(f'./data/{dataset_name}/user_history.txt', 'r') as f:
+    with open(folder + 'user_history.txt', 'r') as f:
         for line in f:
             s = line.split()
             uid = int(s[0])
@@ -80,6 +86,6 @@ def user_history(dataset_name):
                 training.append([uid] + item_history[bridge:(bridge + train)])
                 testing.append([uid] + item_history[bridge + train:])
 
-    pickle.dump(training, open(f'./data/{dataset_name}/training', 'wb'))
-    pickle.dump(testing, open(f'./data/{dataset_name}/testing', 'wb'))
-    pickle.dump(user_history_wv, open(f'./data/{dataset_name}/user_history.wv', 'wb'))
+    pickle.dump(training, open(folder + 'training', 'wb'))
+    pickle.dump(testing, open(folder + 'testing', 'wb'))
+    pickle.dump(user_history_wv, open(folder + 'user_history.wv', 'wb'))

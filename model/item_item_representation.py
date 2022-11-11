@@ -15,12 +15,17 @@ from collections import defaultdict
 import pickle
 import pandas as pd
 
-def item_item_repersentation(dataset_name):
-    user_item_relation = pd.read_csv(f'./data/{dataset_name}/user_item.relation', header=None, sep=',')
+dataset_name='Amazon_Musical_Instruments'
+
+if __name__ == '__main__':
+#def item_item_repersentation(dataset_name):
+    folder = f'../data/{dataset_name}/'
+
+    user_item_relation = pd.read_csv(folder + 'user_item.relation', header=None, sep=',')
     new = user_item_relation.sort_values(2)  # 按照时间戳从大到小排序
 
     users = set(user_item_relation[0])
-    with open(f'./data/{dataset_name}/user_history.txt', 'a') as f:
+    with open(folder + 'user_history.txt', 'a') as f:
         for user in users:
             this_user = user_item_relation[user_item_relation[0] == user].sort_values(2)
             path = [user] + this_user[1].tolist()
@@ -29,7 +34,7 @@ def item_item_repersentation(dataset_name):
             f.write('\n')
 
     edges = set()
-    with open(f'./data/{dataset_name}/user_history.txt', 'r') as f:
+    with open(folder + 'user_history.txt', 'r') as f:
         for line in f.readlines():
             s = line.split()
             uid = s[0]
@@ -47,15 +52,15 @@ def item_item_repersentation(dataset_name):
     for i, edge in enumerate(edges):
         edges_id[edge] = i
         id_edges[i] = edge
-    pickle.dump(edges_id, open(f'./data/{dataset_name}/user_history.edges2id', 'wb'))
-    pickle.dump(id_edges, open(f'./data/{dataset_name}/user_history.id2edges', 'wb'))
+    pickle.dump(edges_id, open(folder + 'user_history.edges2id', 'wb'))
+    pickle.dump(id_edges, open(folder + 'user_history.id2edges', 'wb'))
 
     # 2
 
-    edges_id = pickle.load(open(f'./data/{dataset_name}/user_history.edges2id', 'rb'))
+    edges_id = pickle.load(open(folder + 'user_history.edges2id', 'rb'))
     edge_path = []
 
-    with open(f'./data/{dataset_name}/user_history.txt', 'r') as f:
+    with open(folder + 'user_history.txt', 'r') as f:
         for line in f.readlines():
             path = []
             node_list = [int(x) for x in line.split()[1:]]
@@ -67,7 +72,7 @@ def item_item_repersentation(dataset_name):
                 path.append(edges_id[t])
             edge_path.append(path)
 
-    with open(f'./data/{dataset_name}/user_history_edge_path.txt', 'a') as f:
+    with open(folder + 'user_history_edge_path.txt', 'a') as f:
         for path in edge_path:
             for s in path:
                 f.write(str(s) + ' ')
@@ -75,7 +80,7 @@ def item_item_repersentation(dataset_name):
 
     walks = []
 
-    with open(f'./data/{dataset_name}/user_history_edge_path.txt', 'r') as f:
+    with open(folder + 'user_history_edge_path.txt', 'r') as f:
         for line in f:
             walks.append(line.split())
     # print(walks)
@@ -84,4 +89,4 @@ def item_item_repersentation(dataset_name):
     model = Word2Vec(walks, size=192, window=3, min_count=0, sg=1, hs=1,
                      workers=4)
     # model.wv (item_item) 2200* 100
-    model.wv.save_word2vec_format(f'./data/{dataset_name}/item_item.wv')
+    model.wv.save_word2vec_format(folder + 'item_item.wv')

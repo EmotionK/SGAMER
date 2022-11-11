@@ -236,19 +236,23 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
               f" train_time:{train_time:.2f} | test_time:{testing_time:.2f}")
     print('training finish')
 
+dataset_name='Amazon_Musical_Instruments'
 
-def recommendation_model(dataset_name):
+if __name__ == '__main__':
+#def recommendation_model(dataset_name):
+    folder = f'../data/{dataset_name}/'
+
     # split train and test data
-    user_history_file = f'./data/{dataset_name}/user_history.txt'
+    user_history_file = folder + 'user_history.txt'
 
     # get train and test links
     N = negative_num  # for each user item, there are N negative samples.
-    train_file = f'./data/{dataset_name}/training_neg_' + str(N) + '.links'
-    test_file = f'./data/{dataset_name}/test_neg_' + str(N) + '.links'
+    train_file = folder + 'training_neg_' + str(N) + '.links'
+    test_file = folder + 'test_neg_' + str(N) + '.links'
     train_data, test_data = load_train_test_data(train_file, test_file)
 
     # load users id and items id
-    maptype2id_file = f'./data/{dataset_name}/map.type2id'
+    maptype2id_file = folder + 'map.type2id'
     type2id = pickle.load(open(maptype2id_file, 'rb'))
     users_list = type2id['user']
     user_num = len(users_list)
@@ -256,7 +260,7 @@ def recommendation_model(dataset_name):
     item_num = len(items_list)
 
     # load node embeds
-    node_emb_file = f'./data/{dataset_name}/nodewv.dic'
+    node_emb_file = folder + 'nodewv.dic'
     node_emb = load_node_tensor(node_emb_file)
 
     # load ui pairs
@@ -265,16 +269,15 @@ def recommendation_model(dataset_name):
     # load all ui embeddings and ii embeddings
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapaths_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
-    metapath_emb_folder = f'./data/{dataset_name}/'
-    user_item_direct_emb_file = f'./data/{dataset_name}/user_item_dic.wv'
+    user_item_direct_emb_file = folder + 'user_item_dic.wv'
     user_item_direct_emb = pickle.load(open(user_item_direct_emb_file, 'rb'))
-    item_item_direct_emb_file = f'./data/{dataset_name}/item_item.wv'
+    item_item_direct_emb_file = folder + 'item_item.wv'
     item_item_direct_emb = load_item_item_wv(item_item_direct_emb_file)
-    ui_all_paths_emb = load_ui_metapath_instances_emb(ui_metapaths_list, metapath_emb_folder, user_num, ui_dict,
+    ui_all_paths_emb = load_ui_metapath_instances_emb(ui_metapaths_list, folder, user_num, ui_dict,
                                                       user_item_direct_emb)
-    edges_id_dict_file = f'./data/{dataset_name}/user_history.edges2id'
+    edges_id_dict_file = folder + 'user_history.edges2id'
     edges_id_dict = pickle.load(open(edges_id_dict_file, 'rb'))
-    ii_all_paths_emb = load_ii_metapath_instances_emb(metapath_emb_folder, user_num, ui_dict, item_item_direct_emb,
+    ii_all_paths_emb = load_ii_metapath_instances_emb(folder, user_num, ui_dict, item_item_direct_emb,
                                                       edges_id_dict)
     labels = train_data[:, 2].to(device)
     print(f'labels.shape: {labels.shape}')
@@ -302,7 +305,7 @@ def recommendation_model(dataset_name):
                 get_one_ui = maxpool(max_pooling_input).squeeze(0)
                 this_user_ui_paths_att_emb[(u, i)] = get_one_ui
         ui_paths_att_emb[u] = this_user_ui_paths_att_emb
-    ui_batch_paths_att_emb_pkl_file = f'./data/{dataset_name}/' + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
+    ui_batch_paths_att_emb_pkl_file = folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
     pickle.dump(ui_paths_att_emb, open(ui_batch_paths_att_emb_pkl_file, 'wb'))
 
     # 2. item-item instances slf attention
@@ -327,12 +330,12 @@ def recommendation_model(dataset_name):
                 this_user_ii_paths_att_emb[(i1, i2)] = torch.from_numpy(this_user_ii_paths_att_emb[(i1, i2)])
 
         ii_paths_att_emb[u] = this_user_ii_paths_att_emb
-    ii_batch_paths_att_emb_pkl_file =  f'./data/{dataset_name}/' + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
+    ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
     pickle.dump(ii_paths_att_emb, open(ii_batch_paths_att_emb_pkl_file, 'wb'))
 
     # 3. user and item embedding
-    ii_batch_paths_att_emb_pkl_file =  f'./data/{dataset_name}/' + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
-    ui_batch_paths_att_emb_pkl_file =  f'./data/{dataset_name}/' + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
+    ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
+    ui_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
     ii_paths_att_emb = pickle.load(open(ii_batch_paths_att_emb_pkl_file, 'rb'))
     ui_paths_att_emb = pickle.load(open(ui_batch_paths_att_emb_pkl_file, 'rb'))
     print('start updating user and item embedding...')
@@ -370,12 +373,12 @@ def recommendation_model(dataset_name):
             last_item_att = ii_2
         sequence_concat.append(torch.cat([user_sequence_concat[i] for i in range(0, user_n_items - 1)], 0))
     sequence_tensor = torch.stack(sequence_concat)
-    sequence_tensor_pkl_name =  f'./data/{dataset_name}/' + str(negative_num) + '_sequence_tensor.pkl'
+    sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
     pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
 
     # 4. recommendation
     print('start training recommendation module...')
-    sequence_tensor_pkl_name =  f'./data/{dataset_name}/' + str(negative_num) + '_sequence_tensor.pkl'
+    sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
     sequence_tensor = pickle.load(open(sequence_tensor_pkl_name, 'rb'))
     item_emb = node_emb[user_num:(user_num + item_num), :]
     BATCH_SIZE = 100

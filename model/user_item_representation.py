@@ -16,7 +16,13 @@ import pandas as pd
 from collections import defaultdict
 import pickle
 
-def user_item_representation(dataset_name):
+dataset_name='Amazon_Musical_Instruments'
+
+if __name__ == '__main__':
+#def user_item_representation(dataset_name):
+
+    folder = f'../data/{dataset_name}/'
+
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = 'cpu'
@@ -49,7 +55,7 @@ def user_item_representation(dataset_name):
         def save_embeddings(self):
             return self.embeddings
 
-    user_item_relation = pd.read_csv(f'./data/{dataset_name}/user_item.relation', header=None, sep=',')
+    user_item_relation = pd.read_csv(folder + 'user_item.relation', header=None, sep=',')
     """
     construct adj：user_item
     """
@@ -89,5 +95,5 @@ def user_item_representation(dataset_name):
     for i, user in enumerate(user_global_id_sequence):
         user_item_representation[user] = embeddings[i, :]
 
-    pickle.dump(user_item_representation, open(f'./data/{dataset_name}//user_item_dic.wv', 'wb'))
+    pickle.dump(user_item_representation, open(folder + 'user_item_dic.wv', 'wb'))
     print('save done!')
