@@ -26,12 +26,12 @@ user_number = 1450
 item_number = 9029
 
 if __name__ == '__main__':
-#def embedding_category_brand(dataset_name,user_number,item_number):
+#def embedding_node(dataset_name,user_number,item_number):
     folder = f'../data/{dataset_name}/'
     number_walks = 10
     walk_length = 6  # length of path
     workers = 2
-    representation_size = 192
+    representation_size = 100
     window_size = 3
     output = folder + 'node.wv'
     G = pickle.load(open(folder + 'graph.nx', 'rb'))  # node 包括 user/item/brand/category/also_bought
@@ -59,31 +59,12 @@ if __name__ == '__main__':
     model.wv.save_word2vec_format(output)
 
     nodewv_dic = defaultdict(torch.Tensor)
-    with open(output, 'r') as f: #只要类别和商标的embedding
+    with open(output, 'r') as f:
         f.readline()
         for line in f:
             s = line.split()
             nodeid = int(s[0])
-            if nodeid < 10479:
-                continue
             fea = [float(x) for x in s[1:]]
             nodewv_dic[nodeid] = torch.Tensor(fea)
-
-    i = 0
-    user_embedding = pickle.load(open(folder + 'torch.user_embedding','rb'))
-    user_embedding = torch.reshape(user_embedding,(-1,192))
-    print(f'user_embedding_shape:{user_embedding.shape}')
-    for j in range(user_number):
-        nodewv_dic[i] = torch.cuda.FloatTensor(user_embedding[j])
-        i += 1
-
-    item_embedding = pickle.load(open(folder + 'torch.item_embedding', 'rb'))
-    print(f'item_embedding_shape:{item_embedding.shape}')
-    for k in range(item_number):
-        item_embedding_list = item_embedding[k].tolist()
-        item_embedding_fill = item_embedding_list + item_embedding_list + item_embedding_list
-        nodewv_dic[i] = torch.Tensor(item_embedding_fill)
-        i += 1
-
     pickle.dump(nodewv_dic, open(nodewv, 'wb'))
     print(len(nodewv_dic))

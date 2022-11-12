@@ -27,7 +27,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
 class Autoencoder(nn.Module):
-    def __init__(self, d_in=2000, d_hid=800, d_out=192):
+    def __init__(self, d_in=2000, d_hid=800, d_out=100):
         super(Autoencoder, self).__init__()
         self.encoder = nn.Sequential(
             nn.Linear(d_in, d_hid),
@@ -54,7 +54,7 @@ def instance_emb(metapath_file, output_file):
     path_dict = instance_paths_to_dict(metapath_file) #{(95, 6611): [['95', '10553', '11619', '6611'], ['95', '10553', '11619', '6611']], (95, 3241): [['95', '10553', '11619', '3241']],...}
 
     print("Training...")
-    model = Word2Vec(walks, size=192, window=3, min_count=0, sg=1, hs=1,
+    model = Word2Vec(walks, size=100, window=3, min_count=0, sg=1, hs=1,
                      workers=1)
 
     # mean pooling

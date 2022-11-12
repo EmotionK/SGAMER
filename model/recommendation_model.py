@@ -18,7 +18,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'run.py device: {device}')
 
 att_size = 100
-latent_size = 192
+latent_size = 100
 negative_num = 100
 user_n_items = 4 # for each user, it has n items
 
@@ -80,7 +80,7 @@ def item_attention(item_input, ii_path):
     :param this_item_input:
     :return: item att output
     """
-    item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=192).to(device)
+    item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=100).to(device)
     distance_att = nn.MSELoss()
     optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.01, weight_decay=0.00005)
     num_epoch = 10
@@ -117,15 +117,15 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
             all_pos.append((index, user, item))
         else:
             all_neg.append((index, user, item))
-    recommendation = Recommendation(192).to(device)
+    recommendation = Recommendation(100).to(device)
     optimizer = torch.optim.Adam(recommendation.parameters(), lr=1e-3)
     for epoch in range(100):
         train_start_time = time.time()
         running_loss = 0.0
         for step, batch in enumerate(train_loader):
-            batch_item_emb = node_emb[batch[:, 1]].reshape((batch.shape[0], 1, 192)).to(device)
+            batch_item_emb = node_emb[batch[:, 1]].reshape((batch.shape[0], 1, 100)).to(device)
             batch_labels = batch[:, 2].to(device)
-            batch_sequence_tensor = sequence_tensor[batch[:,0]].reshape((batch.shape[0], 9, 192)).to(device)
+            batch_sequence_tensor = sequence_tensor[batch[:,0]].reshape((batch.shape[0], 9, 100)).to(device)
             optimizer.zero_grad()
             prediction = recommendation(batch_item_emb, batch_sequence_tensor).to(device)
             loss_train = torch.nn.functional.cross_entropy(prediction, batch_labels).to(device)
@@ -160,9 +160,9 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
             scores = []#用户i对于每一个item（包括正例和负例）的推荐得分
             for index, userid, itemid in p_and_n_seq:
                 # calculate score of user and item
-                user_emb = node_emb[userid].reshape((1, 1, 192)).to(device)
-                this_item_emb = node_emb[itemid].reshape((1, 1, 192)).to(device)
-                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 192)).to(device)
+                user_emb = node_emb[userid].reshape((1, 1, 100)).to(device)
+                this_item_emb = node_emb[itemid].reshape((1, 1, 100)).to(device)
+                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item()) #用户i对于每一个item（包括正例和负例）的推荐得分
             normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]

@@ -15,6 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') #使用设
 
 user_items_num = 12
 dataset_name = '' #数据集名称
+fileFolder = f'./data/{dataset_name}/'
 
 # 将数据评分转换为0-1的交互
 def binary(ratings,dataset_name):
@@ -36,7 +37,7 @@ def get_user_items_num_data(data):
 
     print(f'over 12 interaction user number:{user_12_number}')
     
-    user_12_number = 1450
+    user_12_number = 1450 #删除即可
 
     most_user = c_user.most_common(user_12_number)  # 5128
     select_users = [i[0] for i in most_user]  # 用户列表
@@ -60,17 +61,7 @@ def get_user_items_num_data(data):
         new_user_items = user_items.nlargest(user_items_num, 'timestamp')
         select_data = select_data.append(new_user_items, ignore_index=True)
 
-    # print(len(set(select_data['userId'])))  # 1450
-    # print(len(set(select_data['itemId'])))  # 9424
-    # print(len(select_data))
-
-    select_data.to_csv(f'./data/{dataset_name}/user_ratings_item.csv', header=None, index=None, sep=',')
-
-
-    #(n_users,n_items),(X,r,t),(userId_to_index,itemId_to_index),(index_to_userId,index_to_itemId),new_data = reconstruct_data(select_data)##重新构造数据，将userId和itemId转换为从0开始递增
-
-    #new_data.to_csv(f'./data/{dataset_name}/new_data.csv', header=None, index=None, sep=',')  # 将有12个交互的数据保存为csv文件
-    #return (n_users,n_items),(X,r,t),(userId_to_index,itemId_to_index),(index_to_userId,index_to_itemId),new_data
+    select_data.to_csv(fileFolder + 'user_ratings_item.csv', header=None, index=None, sep=',')
 
 #构造用户和项目的交互矩阵
 def construct_user_item_interaction_matrix(new_data, user_number, item_number):
@@ -123,35 +114,34 @@ def get_item_meta():
     item_category_df = pd.DataFrame(item_category)
     item_brand_df = pd.DataFrame(item_brand)
     item_item_df = pd.DataFrame(item_item)
-    item_category_df.to_csv(f'./data/{dataset_name}/item_category.csv', header=None, index=None, sep=',')
-    item_brand_df.to_csv(f'./data/{dataset_name}/item_brand.csv', header=None, index=None, sep=',')
-    item_item_df.to_csv(f'./data/{dataset_name}/item_item.csv', header=None, index=None, sep=',')
+    item_category_df.to_csv(fileFolder + 'item_category.csv', header=None, index=None, sep=',')
+    item_brand_df.to_csv(fileFolder + 'item_brand.csv', header=None, index=None, sep=',')
+    item_item_df.to_csv(fileFolder + 'item_item.csv', header=None, index=None, sep=',')
     print(f'saved items meta to folder: ./data/{dataset_name}')
 
-#根据user_ratings_item.csv提炼item_category.csv,item_brand.csv,item_item.csv
-def refine_user_item_category_brand_item():
-    user_rate_item_df = pd.read_csv(f'./data/{dataset_name}/user_ratings_item.csv',header=None, sep=',')
+def generate_ids():
+    user_rate_item_df = pd.read_csv(fileFolder + 'user_ratings_item.csv',header=None, sep=',')
     user_set = set(user_rate_item_df[1])
     item_set = set(user_rate_item_df[0])
 
     #处理item_category
-    item_category_df = pd.read_csv(f'./data/{dataset_name}/item_category.csv', header=None, sep=',')
+    item_category_df = pd.read_csv(fileFolder + 'item_category.csv', header=None, sep=',')
     item_category_df = item_category_df[item_category_df[0].isin(list(item_set))]  # 获取user_rate_item中有的item
     category_set = set(item_category_df[1])  # 获取类别种类
 
     # 处理item_brand
-    item_brand_df = pd.read_csv(f'./data/{dataset_name}/item_brand.csv', header=None, sep=',')
+    item_brand_df = pd.read_csv(fileFolder + 'item_brand.csv', header=None, sep=',')
     item_brand_df = item_brand_df[item_brand_df[0].isin(list(item_set))]  # 获取user_rate_item中有的item
     brand_set = set(item_brand_df[1])  # 获取商标种类
 
     #处理item_item
-    item_item_df = pd.read_csv(f'./data/{dataset_name}/item_item.csv', header=None, sep=',')
+    item_item_df = pd.read_csv(fileFolder + 'item_item.csv', header=None, sep=',')
     item_item_df = item_item_df[(item_item_df[0].isin(list(item_set))) & (item_item_df[1].isin(list(item_set)))]
 
     #将提炼后的item_category、item_brand、item_item保存为csv文件
-    item_category_df.to_csv(f'./data/{dataset_name}/item_category_refine.csv', header=None, index=None, sep=',')
-    item_brand_df.to_csv(f'./data/{dataset_name}/item_brand_refine.csv', header=None, index=None, sep=',')
-    item_item_df.to_csv(f'./data/{dataset_name}/item_item_refine.csv', header=None, index=None, sep=',')
+    item_category_df.to_csv(fileFolder + 'item_category_refine.csv', header=None, index=None, sep=',')
+    item_brand_df.to_csv(fileFolder + 'item_brand_refine.csv', header=None, index=None, sep=',')
+    item_item_df.to_csv(fileFolder + 'item_item_refine.csv', header=None, index=None, sep=',')
 
     name2id = defaultdict(int)  # 实例化字典，value值为int
     id2name = defaultdict(str)
@@ -208,14 +198,12 @@ def refine_user_item_category_brand_item():
         type2id['brand'].append(i)
         i = i + 1
 
-    refinefolder = f'./data/{dataset_name}/'
-
-    name2idfile = refinefolder + 'map.name2id'
-    id2namefile = refinefolder + 'map.id2name'
-    name2typefile = refinefolder + 'map.name2type'
-    id2typefile = refinefolder + 'map.id2type'
-    type2namefile = refinefolder + 'map.type2name'
-    type2idfile = refinefolder + 'map.type2id'
+    name2idfile = fileFolder + 'map.name2id'
+    id2namefile = fileFolder + 'map.id2name'
+    name2typefile = fileFolder + 'map.name2type'
+    id2typefile = fileFolder + 'map.id2type'
+    type2namefile = fileFolder + 'map.type2name'
+    type2idfile = fileFolder + 'map.type2id'
     pickle.dump(name2id, open(name2idfile, 'wb'))  # 将对象存储在文件中，序列化
     pickle.dump(id2name, open(id2namefile, 'wb'))
     pickle.dump(name2type, open(name2typefile, 'wb'))
@@ -224,10 +212,10 @@ def refine_user_item_category_brand_item():
     pickle.dump(type2id, open(type2idfile, 'wb'))
 
     #使用新的id生成关系文件
-    ic_relation = refinefolder + 'item_category.relation'
-    ib_relation = refinefolder + 'item_brand.relation'
-    ii_relation = refinefolder + 'item_item.relation'
-    ui_relation = refinefolder + 'user_item.relation'
+    ic_relation = fileFolder + 'item_category.relation'
+    ib_relation = fileFolder + 'item_brand.relation'
+    ii_relation = fileFolder + 'item_item.relation'
+    ui_relation = fileFolder + 'user_item.relation'
     item_category = []
     item_brand = []
     item_item = []
@@ -266,18 +254,17 @@ def refine_user_item_category_brand_item():
         user_rate_item_df.loc[user_rate_item_df[user_rate_item_df[1] == user].index, 1] = index
     for index, item in enumerate(item_set):
         user_rate_item_df.loc[user_rate_item_df[user_rate_item_df[0] == item].index, 0] = index
-    user_rate_item_df.to_csv(f'./data/{dataset_name}/new_data.csv', header=None, sep=',', index=False)
+    user_rate_item_df.to_csv(fileFolder + 'new_data.csv', header=None, sep=',', index=False)
     print(f'generic id finish')
 
     return len(user_set),len(item_set),user_rate_item_df,len(all_nodes),len(category_set),len(brand_set)
 
 #generate graph
 def gen_graph(all_node_number):
-    refinefolder = f'./data/{dataset_name}/'
-    ic_relation = refinefolder + 'item_category.relation'
-    ib_relation = refinefolder + 'item_brand.relation'
-    ii_relation = refinefolder + 'item_item.relation'
-    ui_relation = refinefolder + 'user_item.relation'
+    ic_relation = fileFolder + 'item_category.relation'
+    ib_relation = fileFolder + 'item_brand.relation'
+    ii_relation = fileFolder + 'item_item.relation'
+    ui_relation = fileFolder + 'user_item.relation'
     item_brand = pd.read_csv(ib_relation, header=None, sep=',')
     item_category = pd.read_csv(ic_relation, header=None, sep=',')
     item_item = pd.read_csv(ii_relation, header=None, sep=',')
@@ -293,13 +280,13 @@ def gen_graph(all_node_number):
     G.add_edges_from(user_item.to_numpy())
     print(len(G.edges))
 
-    pickle.dump(G, open(f'./data/{dataset_name}/graph.nx', 'wb'))
+    pickle.dump(G, open(fileFolder + 'graph.nx', 'wb'))
 
 #user history
 def gen_ui_history():
-    user_item_relation = pd.read_csv(f'./data/{dataset_name}/user_item.relation', header=None, sep=',')
+    user_item_relation = pd.read_csv(fileFolder + 'user_item.relation', header=None, sep=',')
     users = set(user_item_relation[0])
-    user_history_file = f'./data/{dataset_name}/user_history.txt'
+    user_history_file = fileFolder + 'user_history.txt'
     with open(user_history_file, 'w') as f:
         for user in users:
             this_user = user_item_relation[user_item_relation[0] == user].sort_values(2)#user用户与item的交互按照时间戳进行排序
@@ -327,8 +314,8 @@ def gen_ui_history():
     for i, edge in enumerate(edges):
         edges_id[edge] = i
         id_edges[i] = edge
-    edges2id_file = f'./data/{dataset_name}/user_history.edges2id'
-    id2edges_file = f'./data/{dataset_name}/user_history.id2edges'
+    edges2id_file = fileFolder + 'user_history.edges2id'
+    id2edges_file = fileFolder + 'user_history.id2edges'
     pickle.dump(edges_id, open(edges2id_file, 'wb'))
     pickle.dump(id_edges, open(id2edges_file, 'wb'))
 
@@ -346,7 +333,7 @@ def gen_ui_history():
                 path.append(edges_id[t])
             edge_path.append(path)
 
-    user_history_edge_path_file = f'./data/{dataset_name}/user_history_edge_path.txt'
+    user_history_edge_path_file = fileFolder + 'user_history_edge_path.txt'
     with open(user_history_edge_path_file, 'w') as f:
         for path in edge_path:
             # print(len(path), path)
@@ -362,7 +349,7 @@ def split_train_test():
     test = 6
     testing = []
     training = []
-    user_history_file = f'./data/{dataset_name}/user_history.txt'
+    user_history_file = fileFolder + 'user_history.txt'
     with open(user_history_file, 'r') as f:  # 2200
         for line in f:
             s = line.split()
@@ -374,18 +361,18 @@ def split_train_test():
                 # 划分 train 和 test
                 training.append([uid] + item_history[bridge:(bridge + train)])
                 testing.append([uid] + item_history[bridge + train:])
-    pickle.dump(training, open(f'./data/{dataset_name}/training', 'wb'))
-    pickle.dump(testing, open(f'./data/{dataset_name}/testing', 'wb'))
+    pickle.dump(training, open(fileFolder + 'training', 'wb'))
+    pickle.dump(testing, open(fileFolder + 'testing', 'wb'))
 
 ##negative sample
 def neg_sample():
     NEGS = [5, 100, 500]
-    type2id = pickle.load(open(f'./data/{dataset_name}/map.type2id','rb'))
+    type2id = pickle.load(open(fileFolder + 'map.type2id','rb'))
     all_items = set(type2id['item'])
-    training = pickle.load(open(f'./data/{dataset_name}/training', 'rb'))
-    testing = pickle.load(open(f'./data/{dataset_name}/testing', 'rb'))
+    training = pickle.load(open(fileFolder + 'training', 'rb'))
+    testing = pickle.load(open(fileFolder + 'testing', 'rb'))
     user_history_dic = defaultdict(list)
-    user_history_file = f'./data/{dataset_name}/user_history.txt'
+    user_history_file = fileFolder + 'user_history.txt'
     with open(user_history_file) as f:
         for line in f:
             s = line.split()
@@ -403,7 +390,7 @@ def neg_sample():
             training_link = training_link + positive + negative
 
         training_link_tf = pd.DataFrame(training_link)
-        training_link_tf.to_csv(f'./data/{dataset_name}/training_neg_{str(NEG)}.links', header=None, index=None, sep=',')
+        training_link_tf.to_csv(fileFolder + 'training_neg_{str(NEG)}.links', header=None, index=None, sep=',')
 
         test_link = []
         for user_record in testing:
@@ -415,8 +402,9 @@ def neg_sample():
             test_link = test_link + positive + negative
 
         test_link_tf = pd.DataFrame(test_link)
-        test_link_tf.to_csv(f'./data/{dataset_name}/test_neg_{str(NEG)}.links', header=None, index=None, sep=',')
+        test_link_tf.to_csv(fileFolder + 'test_neg_{str(NEG)}.links', header=None, index=None, sep=',')
         print(f'save neg {NEG} sampled links ... finish')
+
 
 def data_processing(datasetName):
     global dataset_name
@@ -425,22 +413,19 @@ def data_processing(datasetName):
     data = pd.read_csv(f'./dataset/{dataset_name}/ratings_{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])
     print(data.shape) #(1512530, 4)
 
-    data['ratings'] = binary(data['ratings'], dataset_name)  # 根据评分判定0 or 1
-    data = data[data['ratings'] == 1] #重新定义交互
-
     get_user_items_num_data(data) #获取与用户交互的最近的12个item的整体数据
     get_item_meta()  # get items metas 获取每个项目的category、brand、also_buy
-    user_number,item_number,new_data,all_node_number,category_number,brand_number = refine_user_item_category_brand_item() ##根据user_ratings_item.csv提炼item_category.csv,item_brand.csv,item_item.csv
+    user_number,item_number,new_data,all_node_number,category_number,brand_number = generate_ids() #为user,item,category,brand生成唯一标识
     gen_graph(all_node_number) #generate graph
     gen_ui_history()#user history
     split_train_test()#split_train_test
     neg_sample()#negative sample
 
-    user_item_interaction_matrix = construct_user_item_interaction_matrix(new_data, user_number, item_number)#构造用户和项目的交互矩阵
-    pos_samples_idx_dict, neg_samples_idx_dict = get_pos_neg_sample_for_user(user_item_interaction_matrix, user_number)#为每个用户创建正例和负例
+    #user_item_interaction_matrix = construct_user_item_interaction_matrix(new_data, user_number, item_number)#构造用户和项目的交互矩阵
+    #pos_samples_idx_dict, neg_samples_idx_dict = get_pos_neg_sample_for_user(user_item_interaction_matrix, user_number)#为每个用户创建正例和负例
 
     print('\n -------Data Prep Finished, Starting Training--------')
-    return user_number,item_number,pos_samples_idx_dict, neg_samples_idx_dict,category_number,brand_number
+    return user_number,item_number,category_number,brand_number
 
 
 

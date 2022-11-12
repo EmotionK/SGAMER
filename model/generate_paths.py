@@ -44,11 +44,11 @@ class UIPath:
         self.uibici_outfile = ''
         self.uici_outfile = ''
         self.uicibi_outfile = ''
-        self.embeddings = np.zeros((self.usize + self.isize + self.csize + self.bsize, 192))
-        self.user_embedding = np.zeros((self.usize, 192))
-        self.item_embedding = np.zeros((self.isize, 192))
-        self.category_embedding = np.zeros((self.csize, 192))
-        self.brand_embedding = np.zeros((self.bsize, 192))
+        self.embeddings = np.zeros((self.usize + self.isize + self.csize + self.bsize, 100))
+        self.user_embedding = np.zeros((self.usize, 100))
+        self.item_embedding = np.zeros((self.isize, 100))
+        self.category_embedding = np.zeros((self.csize, 100))
+        self.brand_embedding = np.zeros((self.bsize, 100))
         print('Begin to load data')
         start = time.time()
 
@@ -379,7 +379,7 @@ class IIPath:
         self.csize = kargs.get('csize')
         self.bsize = kargs.get('bsize')
 
-        self.embeddings = np.zeros((self.usize+self.isize+self.csize+self.bsize, 192))
+        self.embeddings = np.zeros((self.usize+self.isize+self.csize+self.bsize, 100))
 
         print('Begin to load data')
         start = time.time()

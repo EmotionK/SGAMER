@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # print(walks)
 
     print("Training...")
-    model = Word2Vec(walks, size=192, window=3, min_count=0, sg=1, hs=1,
+    model = Word2Vec(walks, size=100, window=3, min_count=0, sg=1, hs=1,
                      workers=4)
     # model.wv (item_item) 2200* 100
     model.wv.save_word2vec_format(folder + 'item_item.wv')

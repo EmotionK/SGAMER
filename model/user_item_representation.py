@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # Writing our model
     class Autoencoder(nn.Module):
-        def __init__(self, d_in=2000, d_hid=800, d_out=192):
+        def __init__(self, d_in=2000, d_hid=800, d_out=100):
             super(Autoencoder, self).__init__()
 
             self.encoder = nn.Sequential(
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     for _, row in user_item_relation.iterrows():
         adj[user_id2local_id[row[0]], item_id2local_id[row[1]]] = 1.0
     print(f'adj.shape={adj.shape}')
-    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=192).to(device)
+    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=100).to(device)
     distance = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs = 10

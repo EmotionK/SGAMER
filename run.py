@@ -1,7 +1,7 @@
 import os
 
 from data_processing import data_processing
-from model.embedding_category_brand import embedding_category_brand
+from model.embedding_node import embedding_category_brand
 from model.embedding_user_item import embedding_user_item
 from model.generate_paths import gen_instances
 from model.item_item_representation import item_item_repersentation
@@ -17,13 +17,13 @@ if choose_dataset==1:
     dataset_name = 'Amazon_Musical_Instruments'
 
 print(f'{dataset_name} data processing.....')
-user_number,item_number,pos_samples_idx_dict, neg_samples_idx_dict,category_number,brand_number = data_processing(dataset_name)
+user_number,item_number,category_number,brand_number = data_processing(dataset_name)
 
-print(f'{dataset_name} embedding_user_item.....')
-embedding_user_item(dataset_name,user_number,item_number,pos_samples_idx_dict, neg_samples_idx_dict)
+#print(f'{dataset_name} embedding_user_item.....')
+#embedding_user_item(dataset_name,user_number,item_number)
 
 print(f'{dataset_name} embedding_category_brand.....')
-#embedding_category_brand(dataset_name,user_number,item_number)
+embedding_node(dataset_name,user_number,item_number)
 
 print(f'{dataset_name} item_item_repersentation.....')
 #item_item_repersentation(dataset_name)
