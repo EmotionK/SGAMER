@@ -17,3 +17,424 @@ generic id finish
 edges:  15119
 save neg 5 sampled links ... finish
 save neg 100 sampled links ... finish
+save neg 500 sampled links ... finish
+
+ -------Data Prep Finished, Starting Training--------
+Amazon_Musical_Instruments embedding_user_item.....
+Epoch: 1
+/home/ubuntu/model/PaperModel/model/embedding_user_item.py:180: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at  ../torch/csrc/utils/tensor_new.cpp:201.)
+  users = torch.LongTensor([batch_user_idxs]).to(self.device)#user的tensor
+CE Loss: 0.0062 Entr Pos Loss: 1.0830 Entr Neg Loss: 1.0830
+Epoch: 2
+CE Loss: 0.0062 Entr Pos Loss: 1.0830 Entr Neg Loss: 1.0830
+Epoch: 3
+CE Loss: 0.0061 Entr Pos Loss: 1.0830 Entr Neg Loss: 1.0830
+Epoch: 4
+CE Loss: 0.0059 Entr Pos Loss: 1.0830 Entr Neg Loss: 1.0830
+Epoch: 5
+CE Loss: 0.0056 Entr Pos Loss: 1.0829 Entr Neg Loss: 1.0830
+Epoch: 6
+CE Loss: 0.0053 Entr Pos Loss: 1.0828 Entr Neg Loss: 1.0830
+Epoch: 7
+CE Loss: 0.0049 Entr Pos Loss: 1.0817 Entr Neg Loss: 1.0829
+Epoch: 8
+CE Loss: 0.0044 Entr Pos Loss: 1.0770 Entr Neg Loss: 1.0829
+Epoch: 9
+CE Loss: 0.0039 Entr Pos Loss: 1.0658 Entr Neg Loss: 1.0827
+Epoch: 10
+CE Loss: 0.0035 Entr Pos Loss: 1.0546 Entr Neg Loss: 1.0823
+Epoch: 11
+CE Loss: 0.0030 Entr Pos Loss: 1.0464 Entr Neg Loss: 1.0818
+Epoch: 12
+CE Loss: 0.0026 Entr Pos Loss: 1.0387 Entr Neg Loss: 1.0811
+Epoch: 13
+CE Loss: 0.0023 Entr Pos Loss: 1.0293 Entr Neg Loss: 1.0802
+Epoch: 14
+CE Loss: 0.0019 Entr Pos Loss: 1.0147 Entr Neg Loss: 1.0793
+Epoch: 15
+CE Loss: 0.0017 Entr Pos Loss: 1.0001 Entr Neg Loss: 1.0779
+Epoch: 16
+CE Loss: 0.0014 Entr Pos Loss: 0.9663 Entr Neg Loss: 1.0760
+Epoch: 17
+CE Loss: 0.0012 Entr Pos Loss: 0.9126 Entr Neg Loss: 1.0734
+Epoch: 18
+CE Loss: 0.0010 Entr Pos Loss: 0.8333 Entr Neg Loss: 1.0688
+Epoch: 19
+CE Loss: 0.0008 Entr Pos Loss: 0.7379 Entr Neg Loss: 1.0636
+Epoch: 20
+CE Loss: 0.0006 Entr Pos Loss: 0.6235 Entr Neg Loss: 1.0576
+Epoch: 21
+CE Loss: 0.0004 Entr Pos Loss: 0.5068 Entr Neg Loss: 1.0515
+Epoch: 22
+CE Loss: 0.0003 Entr Pos Loss: 0.3961 Entr Neg Loss: 1.0446
+Epoch: 23
+CE Loss: 0.0003 Entr Pos Loss: 0.3051 Entr Neg Loss: 1.0379
+Epoch: 24
+CE Loss: 0.0002 Entr Pos Loss: 0.2327 Entr Neg Loss: 1.0325
+Epoch: 25
+CE Loss: 0.0002 Entr Pos Loss: 0.1816 Entr Neg Loss: 1.0283
+Epoch: 26
+CE Loss: 0.0001 Entr Pos Loss: 0.1421 Entr Neg Loss: 1.0236
+Epoch: 27
+CE Loss: 0.0001 Entr Pos Loss: 0.1138 Entr Neg Loss: 1.0201
+Epoch: 28
+CE Loss: 0.0001 Entr Pos Loss: 0.0945 Entr Neg Loss: 1.0171
+Epoch: 29
+CE Loss: 0.0001 Entr Pos Loss: 0.0802 Entr Neg Loss: 1.0147
+Epoch: 30
+CE Loss: 0.0001 Entr Pos Loss: 0.0690 Entr Neg Loss: 1.0128
+Epoch: 31
+CE Loss: 0.0001 Entr Pos Loss: 0.0607 Entr Neg Loss: 1.0117
+Epoch: 32
+CE Loss: 0.0001 Entr Pos Loss: 0.0545 Entr Neg Loss: 1.0104
+Epoch: 33
+CE Loss: 0.0001 Entr Pos Loss: 0.0490 Entr Neg Loss: 1.0088
+Epoch: 34
+CE Loss: 0.0000 Entr Pos Loss: 0.0450 Entr Neg Loss: 1.0081
+Epoch: 35
+CE Loss: 0.0000 Entr Pos Loss: 0.0415 Entr Neg Loss: 1.0067
+Epoch: 36
+CE Loss: 0.0000 Entr Pos Loss: 0.0387 Entr Neg Loss: 1.0052
+Epoch: 37
+CE Loss: 0.0000 Entr Pos Loss: 0.0364 Entr Neg Loss: 1.0063
+Epoch: 38
+CE Loss: 0.0000 Entr Pos Loss: 0.0345 Entr Neg Loss: 1.0055
+Epoch: 39
+CE Loss: 0.0000 Entr Pos Loss: 0.0324 Entr Neg Loss: 1.0054
+Epoch: 40
+CE Loss: 0.0000 Entr Pos Loss: 0.0307 Entr Neg Loss: 1.0049
+Epoch: 41
+CE Loss: 0.0000 Entr Pos Loss: 0.0299 Entr Neg Loss: 1.0040
+Epoch: 42
+CE Loss: 0.0000 Entr Pos Loss: 0.0290 Entr Neg Loss: 1.0035
+Epoch: 43
+CE Loss: 0.0000 Entr Pos Loss: 0.0279 Entr Neg Loss: 1.0037
+Epoch: 44
+CE Loss: 0.0000 Entr Pos Loss: 0.0269 Entr Neg Loss: 1.0036
+Epoch: 45
+CE Loss: 0.0000 Entr Pos Loss: 0.0261 Entr Neg Loss: 1.0036
+Epoch: 46
+CE Loss: 0.0000 Entr Pos Loss: 0.0254 Entr Neg Loss: 1.0028
+Epoch: 47
+CE Loss: 0.0000 Entr Pos Loss: 0.0248 Entr Neg Loss: 1.0031
+Epoch: 48
+CE Loss: 0.0000 Entr Pos Loss: 0.0245 Entr Neg Loss: 1.0042
+Epoch: 49
+CE Loss: 0.0000 Entr Pos Loss: 0.0239 Entr Neg Loss: 1.0032
+Epoch: 50
+CE Loss: 0.0000 Entr Pos Loss: 0.0235 Entr Neg Loss: 1.0038
+Epoch: 51
+CE Loss: 0.0000 Entr Pos Loss: 0.0232 Entr Neg Loss: 1.0036
+Epoch: 52
+CE Loss: 0.0000 Entr Pos Loss: 0.0229 Entr Neg Loss: 1.0040
+Epoch: 53
+CE Loss: 0.0000 Entr Pos Loss: 0.0224 Entr Neg Loss: 1.0038
+Epoch: 54
+CE Loss: 0.0000 Entr Pos Loss: 0.0223 Entr Neg Loss: 1.0038
+Epoch: 55
+CE Loss: 0.0000 Entr Pos Loss: 0.0220 Entr Neg Loss: 1.0040
+Epoch: 56
+CE Loss: 0.0000 Entr Pos Loss: 0.0219 Entr Neg Loss: 1.0040
+Epoch: 57
+CE Loss: 0.0000 Entr Pos Loss: 0.0217 Entr Neg Loss: 1.0037
+Epoch: 58
+CE Loss: 0.0000 Entr Pos Loss: 0.0214 Entr Neg Loss: 1.0037
+Epoch: 59
+CE Loss: 0.0000 Entr Pos Loss: 0.0213 Entr Neg Loss: 1.0049
+Epoch: 60
+CE Loss: 0.0000 Entr Pos Loss: 0.0211 Entr Neg Loss: 1.0052
+Epoch: 61
+CE Loss: 0.0000 Entr Pos Loss: 0.0208 Entr Neg Loss: 1.0046
+Epoch: 62
+CE Loss: 0.0000 Entr Pos Loss: 0.0208 Entr Neg Loss: 1.0048
+Epoch: 63
+CE Loss: 0.0000 Entr Pos Loss: 0.0207 Entr Neg Loss: 1.0044
+Epoch: 64
+CE Loss: 0.0000 Entr Pos Loss: 0.0206 Entr Neg Loss: 1.0050
+Epoch: 65
+CE Loss: 0.0000 Entr Pos Loss: 0.0205 Entr Neg Loss: 1.0045
+Epoch: 66
+CE Loss: 0.0000 Entr Pos Loss: 0.0204 Entr Neg Loss: 1.0052
+Epoch: 67
+CE Loss: 0.0000 Entr Pos Loss: 0.0203 Entr Neg Loss: 1.0056
+Epoch: 68
+CE Loss: 0.0000 Entr Pos Loss: 0.0202 Entr Neg Loss: 1.0052
+Epoch: 69
+CE Loss: 0.0000 Entr Pos Loss: 0.0201 Entr Neg Loss: 1.0051
+Epoch: 70
+CE Loss: 0.0000 Entr Pos Loss: 0.0200 Entr Neg Loss: 1.0055
+Epoch: 71
+CE Loss: 0.0000 Entr Pos Loss: 0.0199 Entr Neg Loss: 1.0050
+Epoch: 72
+CE Loss: 0.0000 Entr Pos Loss: 0.0200 Entr Neg Loss: 1.0062
+Epoch: 73
+CE Loss: 0.0000 Entr Pos Loss: 0.0200 Entr Neg Loss: 1.0057
+Epoch: 74
+CE Loss: 0.0000 Entr Pos Loss: 0.0198 Entr Neg Loss: 1.0058
+Epoch: 75
+CE Loss: 0.0000 Entr Pos Loss: 0.0198 Entr Neg Loss: 1.0063
+Epoch: 76
+CE Loss: 0.0000 Entr Pos Loss: 0.0197 Entr Neg Loss: 1.0055
+Epoch: 77
+CE Loss: 0.0000 Entr Pos Loss: 0.0197 Entr Neg Loss: 1.0057
+Epoch: 78
+CE Loss: 0.0000 Entr Pos Loss: 0.0197 Entr Neg Loss: 1.0061
+Epoch: 79
+CE Loss: 0.0000 Entr Pos Loss: 0.0195 Entr Neg Loss: 1.0053
+Epoch: 80
+CE Loss: 0.0000 Entr Pos Loss: 0.0195 Entr Neg Loss: 1.0065
+Epoch: 81
+CE Loss: 0.0000 Entr Pos Loss: 0.0196 Entr Neg Loss: 1.0063
+Epoch: 82
+CE Loss: 0.0000 Entr Pos Loss: 0.0195 Entr Neg Loss: 1.0059
+Epoch: 83
+CE Loss: 0.0000 Entr Pos Loss: 0.0194 Entr Neg Loss: 1.0070
+Epoch: 84
+CE Loss: 0.0000 Entr Pos Loss: 0.0195 Entr Neg Loss: 1.0066
+Epoch: 85
+CE Loss: 0.0000 Entr Pos Loss: 0.0194 Entr Neg Loss: 1.0058
+Epoch: 86
+CE Loss: 0.0000 Entr Pos Loss: 0.0194 Entr Neg Loss: 1.0068
+Epoch: 87
+CE Loss: 0.0000 Entr Pos Loss: 0.0194 Entr Neg Loss: 1.0071
+Epoch: 88
+CE Loss: 0.0000 Entr Pos Loss: 0.0192 Entr Neg Loss: 1.0070
+Epoch: 89
+CE Loss: 0.0000 Entr Pos Loss: 0.0193 Entr Neg Loss: 1.0067
+Epoch: 90
+CE Loss: 0.0000 Entr Pos Loss: 0.0193 Entr Neg Loss: 1.0071
+Epoch: 91
+CE Loss: 0.0000 Entr Pos Loss: 0.0193 Entr Neg Loss: 1.0069
+Epoch: 92
+CE Loss: 0.0000 Entr Pos Loss: 0.0191 Entr Neg Loss: 1.0064
+Epoch: 93
+CE Loss: 0.0000 Entr Pos Loss: 0.0190 Entr Neg Loss: 1.0069
+Epoch: 94
+CE Loss: 0.0000 Entr Pos Loss: 0.0191 Entr Neg Loss: 1.0070
+Epoch: 95
+CE Loss: 0.0000 Entr Pos Loss: 0.0192 Entr Neg Loss: 1.0069
+Epoch: 96
+CE Loss: 0.0000 Entr Pos Loss: 0.0192 Entr Neg Loss: 1.0081
+Epoch: 97
+CE Loss: 0.0000 Entr Pos Loss: 0.0193 Entr Neg Loss: 1.0074
+Epoch: 98
+CE Loss: 0.0000 Entr Pos Loss: 0.0190 Entr Neg Loss: 1.0073
+Epoch: 99
+CE Loss: 0.0000 Entr Pos Loss: 0.0191 Entr Neg Loss: 1.0070
+Epoch: 100
+CE Loss: 0.0000 Entr Pos Loss: 0.0191 Entr Neg Loss: 1.0080
+Epoch: 101
+CE Loss: 0.0000 Entr Pos Loss: 0.0190 Entr Neg Loss: 1.0075
+Epoch: 102
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0071
+Epoch: 103
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0072
+Epoch: 104
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0074
+Epoch: 105
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0082
+Epoch: 106
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0087
+Epoch: 107
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0078
+Epoch: 108
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0087
+Epoch: 109
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0076
+Epoch: 110
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0081
+Epoch: 111
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0082
+Epoch: 112
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0081
+Epoch: 113
+CE Loss: 0.0000 Entr Pos Loss: 0.0189 Entr Neg Loss: 1.0081
+Epoch: 114
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0086
+Epoch: 115
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0080
+Epoch: 116
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0095
+Epoch: 117
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0073
+Epoch: 118
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0087
+Epoch: 119
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0086
+Epoch: 120
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0083
+Epoch: 121
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0091
+Epoch: 122
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0084
+Epoch: 123
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0088
+Epoch: 124
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0088
+Epoch: 125
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0087
+Epoch: 126
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0084
+Epoch: 127
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0093
+Epoch: 128
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0092
+Epoch: 129
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0089
+Epoch: 130
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0089
+Epoch: 131
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0090
+Epoch: 132
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0088
+Epoch: 133
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0088
+Epoch: 134
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0091
+Epoch: 135
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0087
+Epoch: 136
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0089
+Epoch: 137
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0093
+Epoch: 138
+CE Loss: 0.0000 Entr Pos Loss: 0.0188 Entr Neg Loss: 1.0099
+Epoch: 139
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0094
+Epoch: 140
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0088
+Epoch: 141
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0094
+Epoch: 142
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0095
+Epoch: 143
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0089
+Epoch: 144
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0093
+Epoch: 145
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0092
+Epoch: 146
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0098
+Epoch: 147
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0098
+Epoch: 148
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0090
+Epoch: 149
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0098
+Epoch: 150
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0092
+Epoch: 151
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0098
+Epoch: 152
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0091
+Epoch: 153
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0093
+Epoch: 154
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0090
+Epoch: 155
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0095
+Epoch: 156
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0098
+Epoch: 157
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0096
+Epoch: 158
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0090
+Epoch: 159
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0096
+Epoch: 160
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0097
+Epoch: 161
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0092
+Epoch: 162
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0098
+Epoch: 163
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0101
+Epoch: 164
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0102
+Epoch: 165
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0095
+Epoch: 166
+CE Loss: 0.0000 Entr Pos Loss: 0.0187 Entr Neg Loss: 1.0106
+Epoch: 167
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0094
+Epoch: 168
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0101
+Epoch: 169
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0101
+Epoch: 170
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0095
+Epoch: 171
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0102
+Epoch: 172
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0102
+Epoch: 173
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0096
+Epoch: 174
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0101
+Epoch: 175
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0100
+Epoch: 176
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0097
+Epoch: 177
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0098
+Epoch: 178
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0108
+Epoch: 179
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0101
+Epoch: 180
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0098
+Epoch: 181
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0101
+Epoch: 182
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0099
+Epoch: 183
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0102
+Epoch: 184
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0107
+Epoch: 185
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0112
+Epoch: 186
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0106
+Epoch: 187
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0105
+Epoch: 188
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0101
+Epoch: 189
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0098
+Epoch: 190
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0102
+Epoch: 191
+CE Loss: 0.0000 Entr Pos Loss: 0.0186 Entr Neg Loss: 1.0108
+Epoch: 192
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0108
+Epoch: 193
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0101
+Epoch: 194
+CE Loss: 0.0000 Entr Pos Loss: 0.0183 Entr Neg Loss: 1.0104
+Epoch: 195
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0100
+Epoch: 196
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0113
+Epoch: 197
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0103
+Epoch: 198
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0104
+Epoch: 199
+CE Loss: 0.0000 Entr Pos Loss: 0.0185 Entr Neg Loss: 1.0108
+Epoch: 200
+CE Loss: 0.0000 Entr Pos Loss: 0.0184 Entr Neg Loss: 1.0107
+Amazon_Musical_Instruments embedding_category_brand.....
+Number of nodes: 12834
+Number of edges: 89113
+number_walks: 10
+Number of walks: 128340
+Data size (walks*length): 770040
+<class 'networkx.classes.graph.Graph'>
+Training...
+user_embedding_shape:torch.Size([1450, 192])
+Traceback (most recent call last):
+  File "run.py", line 26, in <module>
+    embedding_category_brand(dataset_name,user_number,item_number)
+  File "/home/ubuntu/model/PaperModel/model/embedding_category_brand.py", line 69, in embedding_category_brand
+    nodewv_dic[i] = torch.Tensor(user_embedding[j])
+TypeError: expected TensorOptions(dtype=float, device=cpu, layout=Strided, requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt)) (got TensorOptions(dtype=float, device=cuda:0, layout=Strided, requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt)))

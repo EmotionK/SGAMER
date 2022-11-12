@@ -69,7 +69,7 @@ class UIPath:
         nodewv_tensor = []
         all_nodes = list(range(len(nodewv_dic.keys())))
         for node in all_nodes:
-            nodewv_tensor.append(nodewv_dic[node].detach().numpy())
+            nodewv_tensor.append(nodewv_dic[node].cpu().detach().numpy())
         nodewv_tensor = torch.Tensor(nodewv_tensor)
         #print(f'nodewv_tensor:{nodewv_tensor}')
         self.embeddings = nodewv_tensor
@@ -404,7 +404,7 @@ class IIPath:
         nodewv_tensor = []
         all_nodes = list(range(len(nodewv_dic.keys())))
         for node in all_nodes:
-            nodewv_tensor.append(nodewv_dic[node].detach().numpy())
+            nodewv_tensor.append(nodewv_dic[node].cpu().detach().numpy())
         nodewv_tensor = torch.Tensor(nodewv_tensor)
         self.embeddings = nodewv_tensor
         print('############################')

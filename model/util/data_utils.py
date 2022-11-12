@@ -9,7 +9,7 @@ def load_node_tensor(filename):
     nodewv_tensor = []
     all_nodes = list(range(len(nodewv_dic.keys())))
     for node in all_nodes:
-        nodewv_tensor.append(nodewv_dic[node].detach().numpy())
+        nodewv_tensor.append(nodewv_dic[node].cpu().detach().numpy())
     nodewv_tensor = torch.Tensor(nodewv_tensor)
     return nodewv_tensor
 
@@ -109,7 +109,7 @@ def load_ui_metapath_instances_emb(metapath_list, ui_metapath_emb_folder, user_n
             if (u,i) not in this_user_ui_instances_embs.keys():
                 this_user_ui_instances_embs[(u,i)] = user_item_direct_emb[u].unsqueeze(0)
             else:
-                this_user_ui_instances_embs[(u, i)] = torch.Tensor(this_user_ui_instances_embs[(u, i)])
+                this_user_ui_instances_embs[(u, i)] = torch.cuda.FloatTensor(this_user_ui_instances_embs[(u, i)])
         len(ui_dict[u]) == len(this_user_ui_instances_embs)#12,11 assert
         ui_instances_embs[u] = this_user_ui_instances_embs
     return ui_instances_embs

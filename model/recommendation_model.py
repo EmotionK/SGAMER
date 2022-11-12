@@ -1,4 +1,10 @@
 #encoding=utf-8
+
+
+import sys
+import os
+sys.path.append('..')
+
 import time
 import math
 from torchnlp.nn import Attention
@@ -154,9 +160,9 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
             scores = []#用户i对于每一个item（包括正例和负例）的推荐得分
             for index, userid, itemid in p_and_n_seq:
                 # calculate score of user and item
-                user_emb = node_emb[userid].reshape((1, 1, 100)).to(device)
-                this_item_emb = node_emb[itemid].reshape((1, 1, 100)).to(device)
-                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
+                user_emb = node_emb[userid].reshape((1, 1, 192)).to(device)
+                this_item_emb = node_emb[itemid].reshape((1, 1, 192)).to(device)
+                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 192)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item()) #用户i对于每一个item（包括正例和负例）的推荐得分
             normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
@@ -298,7 +304,7 @@ if __name__ == '__main__':
             if len(ui_all_paths_emb[u][(u, i)]) == 1:
                 this_user_ui_paths_att_emb[(u, i)] = ui_all_paths_emb[u][(u, i)]
             else:
-                slf_att_input = torch.Tensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
+                slf_att_input = torch.cuda.FloatTensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
                 this_user_ui_paths_att_emb[(u, i)] = instances_slf_att(slf_att_input)
                 # user-item instances to one. for each user-item pair, only one instance is needed.
                 max_pooling_input = torch.from_numpy(this_user_ui_paths_att_emb[(u, i)])

@@ -10,7 +10,9 @@
 @time: 2018/09/13
 """
 
-
+import sys
+import os
+sys.path.append('..')
 
 import random
 from gensim.models import Word2Vec
@@ -20,7 +22,7 @@ from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
 dataset_name='Amazon_Musical_Instruments'
-user_number = '1450'
+user_number = 1450
 item_number = 9029
 
 if __name__ == '__main__':
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     user_embedding = torch.reshape(user_embedding,(-1,192))
     print(f'user_embedding_shape:{user_embedding.shape}')
     for j in range(user_number):
-        nodewv_dic[i] = torch.Tensor(user_embedding[j])
+        nodewv_dic[i] = torch.cuda.FloatTensor(user_embedding[j])
         i += 1
 
     item_embedding = pickle.load(open(folder + 'torch.item_embedding', 'rb'))

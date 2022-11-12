@@ -5,8 +5,11 @@
 @file: meta_path_instances_representation.py
 @time: 2020/06/08
 """
+
 import sys
-sys.path.append("../../../")
+import os
+sys.path.append('..')
+
 from gensim.models import Word2Vec
 from model.util.data_utils import *
 import torch
