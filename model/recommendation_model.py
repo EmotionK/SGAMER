@@ -7,6 +7,7 @@ sys.path.append('..')
 
 import time
 import math
+import torch
 from torchnlp.nn import Attention
 import torch.utils.data as Data
 from model.util.rank_metrics import ndcg_at_k
@@ -54,6 +55,11 @@ class Recommendation(nn.Module):
         output = output.reshape((a, c))
         fe = F.log_softmax(output)
         return fe
+
+def GRU(input_tensor):
+    instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
+    r_out, h_state = instances_gru(input_tensor.to(device))
+    return r_out[:,-1,:]
 
 def instances_slf_att(input_tensor):
     instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
@@ -304,7 +310,8 @@ if __name__ == '__main__':
             if len(ui_all_paths_emb[u][(u, i)]) == 1:
                 this_user_ui_paths_att_emb[(u, i)] = ui_all_paths_emb[u][(u, i)]
             else:
-                slf_att_input = torch.cuda.FloatTensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
+                gru_input = torch.cuda.FloatTensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
+                slf_att_input = GRU(gru_input)
                 this_user_ui_paths_att_emb[(u, i)] = instances_slf_att(slf_att_input)
                 # user-item instances to one. for each user-item pair, only one instance is needed.
                 max_pooling_input = torch.from_numpy(this_user_ui_paths_att_emb[(u, i)])
@@ -331,7 +338,8 @@ if __name__ == '__main__':
             if len(ii_all_paths_emb[u][(i1, i2)]) == 1:
                 this_user_ii_paths_att_emb[(i1, i2)] = ii_all_paths_emb[u][(i1, i2)]
             else:
-                slf_att_input = torch.Tensor(ii_all_paths_emb[u][(i1, i2)]).unsqueeze(0)
+                gru_input = torch.Tensor(ii_all_paths_emb[u][(i1, i2)]).unsqueeze(0)
+                slf_att_input = GRU(gru_input)
                 this_user_ii_paths_att_emb[(i1, i2)] = instances_slf_att(slf_att_input).squeeze(0)
                 this_user_ii_paths_att_emb[(i1, i2)] = torch.from_numpy(this_user_ii_paths_att_emb[(i1, i2)])
 

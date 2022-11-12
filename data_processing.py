@@ -39,7 +39,7 @@ def get_user_items_num_data(data):
     
     user_12_number = 1450 #删除即可
 
-    most_user = c_user.most_common(user_12_number)  # 5128
+    most_user = c_user.most_common(user_12_number)  # 6793
     select_users = [i[0] for i in most_user]  # 用户列表
 
     data_filter_user = data[data['userId'].isin(select_users)]  # 获得选择的用户存在的数据
