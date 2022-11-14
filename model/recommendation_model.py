@@ -67,7 +67,7 @@ def instances_slf_att(input_tensor):
     instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
     instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
     distance_slf_att = nn.MSELoss()
-    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
+    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.05, weight_decay=0.9)
     num_epochs_slf_att = 50
     for epoch in range(num_epochs_slf_att):
         gru_out,h_n = instances_gru(input_tensor.to(device))
