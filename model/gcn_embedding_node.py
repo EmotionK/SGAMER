@@ -37,7 +37,10 @@ if __name__ == '__main__':
     x = torch.randn(12834,100)
     edge_index = item_brand.to_numpy().tolist() + item_category.to_numpy().tolist() + item_item.to_numpy().tolist() + user_item.to_numpy().tolist()
 
-
+    edge_index = torch.tensor(edge_index)
+    data = Data(x,edge_index.t().contiguous())
+    
+    print(data)
 
     model = GCN(100,16,100).to(device)
 
