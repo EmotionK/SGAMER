@@ -34,14 +34,15 @@ if __name__ == '__main__':
     item_item = pd.read_csv(ii_relation, header=None, sep=',')
     user_item = pd.read_csv(ui_relation, header=None, sep=',')[[0, 1]]
 
-    x = torch.randn(12834,100)
+    x = torch.randn(12834,100).to(device)
     edge_index = item_brand.to_numpy().tolist() + item_category.to_numpy().tolist() + item_item.to_numpy().tolist() + user_item.to_numpy().tolist()
 
-    edge_index = torch.tensor(edge_index)
+    edge_index = torch.tensor(edge_index).to(device)
     data = Data(x,edge_index.t().contiguous())
-    
+
     print(data)
 
     model = GCN(100,16,100).to(device)
 
+    x = 
 
