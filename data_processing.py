@@ -14,8 +14,6 @@ from model.embedding_user_item import Model
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') #使用设备
 
 user_items_num = 12
-dataset_name = '' #数据集名称
-fileFolder = f'./data/{dataset_name}/'
 
 # 将数据评分转换为0-1的交互
 def binary(ratings,dataset_name):
@@ -26,7 +24,7 @@ def binary(ratings,dataset_name):
     return y_binary
 
 #获取与用户交互的最近的12个item的整体数据
-def get_user_items_num_data(data):
+def get_user_items_num_data(data,fileFolder):
 
     c_user = Counter(data['userId']) #统计userId出现的数量
 
@@ -92,7 +90,7 @@ def get_pos_neg_sample_for_user(user_item_interaction_matrix,n):
     return pos_samples_idx_dict,neg_samples_idx_dict
 
 #get items metas 获取每个项目的category、brand、also_buy
-def get_item_meta():
+def get_item_meta(fileFolder):
     item_category = []
     item_brand = []
     item_item = []
@@ -119,7 +117,7 @@ def get_item_meta():
     item_item_df.to_csv(fileFolder + 'item_item.csv', header=None, index=None, sep=',')
     print(f'saved items meta to folder: ./data/{dataset_name}')
 
-def generate_ids():
+def generate_ids(fileFolder):
     user_rate_item_df = pd.read_csv(fileFolder + 'user_ratings_item.csv',header=None, sep=',')
     user_set = set(user_rate_item_df[1])
     item_set = set(user_rate_item_df[0])
@@ -260,7 +258,7 @@ def generate_ids():
     return len(user_set),len(item_set),user_rate_item_df,len(all_nodes),len(category_set),len(brand_set)
 
 #generate graph
-def gen_graph(all_node_number):
+def gen_graph(all_node_number,fileFolder):
     ic_relation = fileFolder + 'item_category.relation'
     ib_relation = fileFolder + 'item_brand.relation'
     ii_relation = fileFolder + 'item_item.relation'
@@ -283,7 +281,7 @@ def gen_graph(all_node_number):
     pickle.dump(G, open(fileFolder + 'graph.nx', 'wb'))
 
 #user history
-def gen_ui_history():
+def gen_ui_history(fileFolder):
     user_item_relation = pd.read_csv(fileFolder + 'user_item.relation', header=None, sep=',')
     users = set(user_item_relation[0])
     user_history_file = fileFolder + 'user_history.txt'
@@ -343,7 +341,7 @@ def gen_ui_history():
             f.write('\n')
 
 #split_train_test
-def split_train_test():
+def split_train_test(fileFolder):
     bridge = 2
     train = 4
     test = 6
@@ -365,7 +363,7 @@ def split_train_test():
     pickle.dump(testing, open(fileFolder + 'testing', 'wb'))
 
 ##negative sample
-def neg_sample():
+def neg_sample(fileFolder):
     NEGS = [5, 100, 500]
     type2id = pickle.load(open(fileFolder + 'map.type2id','rb'))
     all_items = set(type2id['item'])
@@ -410,16 +408,17 @@ def data_processing(datasetName):
     global dataset_name
     dataset_name = datasetName
     print(f'device: {device}')
+    fileFolder = f'./data/{dataset_name}/'
     data = pd.read_csv(f'./dataset/{dataset_name}/ratings_{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])
     print(data.shape) #(1512530, 4)
 
-    get_user_items_num_data(data) #获取与用户交互的最近的12个item的整体数据
-    get_item_meta()  # get items metas 获取每个项目的category、brand、also_buy
-    user_number,item_number,new_data,all_node_number,category_number,brand_number = generate_ids() #为user,item,category,brand生成唯一标识
-    gen_graph(all_node_number) #generate graph
-    gen_ui_history()#user history
-    split_train_test()#split_train_test
-    neg_sample()#negative sample
+    get_user_items_num_data(data,fileFolder) #获取与用户交互的最近的12个item的整体数据
+    get_item_meta(fileFolder)  # get items metas 获取每个项目的category、brand、also_buy
+    user_number,item_number,new_data,all_node_number,category_number,brand_number = generate_ids(fileFolder) #为user,item,category,brand生成唯一标识
+    gen_graph(all_node_number,fileFolder) #generate graph
+    gen_ui_history(fileFolder)#user history
+    split_train_test(fileFolder)#split_train_test
+    neg_sample(fileFolder)#negative sample
 
     #user_item_interaction_matrix = construct_user_item_interaction_matrix(new_data, user_number, item_number)#构造用户和项目的交互矩阵
     #pos_samples_idx_dict, neg_samples_idx_dict = get_pos_neg_sample_for_user(user_item_interaction_matrix, user_number)#为每个用户创建正例和负例
