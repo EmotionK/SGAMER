@@ -39,7 +39,7 @@ if __name__ == '__main__':
     item_item = pd.read_csv(ii_relation, header=None, sep=',')
     user_item = pd.read_csv(ui_relation, header=None, sep=',')[[0, 1]]
 
-    x = torch.randn(12834,100).to(device)
+    x = torch.randn(13305,100).to(device)
     edge_index = item_brand.to_numpy().tolist() + item_category.to_numpy().tolist() + item_item.to_numpy().tolist() + user_item.to_numpy().tolist()
 
     edge_index = torch.tensor(edge_index).to(device)
@@ -58,9 +58,10 @@ if __name__ == '__main__':
     nodewv_dic = defaultdict(torch.Tensor)
     for index,list in enumerate(out):
         nodeid = index
-        feature_embedding = list
+        feature_embedding = [float(x) for x in list]
         #print(feature_embedding)
         nodewv_dic[nodeid] = torch.Tensor(feature_embedding)
+    print("finish.....")
     pickle.dump(nodewv_dic, open(nodewv, 'wb'))
     print(len(nodewv_dic))
 
