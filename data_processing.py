@@ -24,13 +24,8 @@ def binary(ratings,dataset_name):
     return y_binary
 
 #获取与用户交互的最近的12个item的整体数据
-<<<<<<< HEAD
-def get_user_items_num_data(data):
-    print(fileFolder)
-=======
 def get_user_items_num_data(data,fileFolder):
 
->>>>>>> dcb6e2699ad11fbef39c3f57e050529bbc3d215a
     c_user = Counter(data['userId']) #统计userId出现的数量
 
     user_12_number = 0

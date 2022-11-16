@@ -1,9 +1,11 @@
 import math
+import pickle
+from collections import defaultdict
 
 import torch
 import pandas as pd
 #from networkx import edges
-from torch.nn import Parameter, Module, functional as F
+from torch.nn import functional as F
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 
@@ -16,15 +18,18 @@ class GCN(torch.nn.Module):
         super(GCN, self).__init__()
         self.gc1 = GCNConv(nfeat, nhid)
         self.gc2 = GCNConv(nhid, nclass)
-    def forward(self, x, adj):
-        x = F.relu(self.gc1(x, adj))
-        x = self.gc2(x, adj)
+    def forward(self,data):
+        x, edge_index = data.x, data.edge_index
+        x = self.gc1(x, edge_index)
+        x = F.relu(x)
+        x = self.gc2(x, edge_index)
         return x
 
 
 
 if __name__ == '__main__':
     fileFolder = f'../data/{dataset_name}/'
+    nodewv = fileFolder + 'gcnnodewv.dic'
     ic_relation = fileFolder + 'item_category.relation'
     ib_relation = fileFolder + 'item_brand.relation'
     ii_relation = fileFolder + 'item_item.relation'
@@ -44,5 +49,20 @@ if __name__ == '__main__':
 
     model = GCN(100,16,100).to(device)
 
-    x = 
+    print(model)
+    print("GCN begin.......")
+    out = model(data)
+    print(x)
+    print(x.shape)
+
+    nodewv_dic = defaultdict(torch.Tensor)
+    for index,list in enumerate(out):
+        nodeid = index
+        feature_embedding = list
+        #print(feature_embedding)
+        nodewv_dic[nodeid] = torch.Tensor(feature_embedding)
+    pickle.dump(nodewv_dic, open(nodewv, 'wb'))
+    print(len(nodewv_dic))
+
+
 
