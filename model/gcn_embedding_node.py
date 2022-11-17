@@ -9,6 +9,8 @@ from torch.nn import functional as F
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 
+from model.embedding_user_item import lr
+
 dataset_name = 'Amazon_Musical_Instruments'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -18,8 +20,7 @@ class GCN(torch.nn.Module):
         super(GCN, self).__init__()
         self.gc1 = GCNConv(nfeat, nhid)
         self.gc2 = GCNConv(nhid, nclass)
-    def forward(self,data):
-        x, edge_index = data.x, data.edge_index
+    def forward(self,x,edge_index):
         x = self.gc1(x, edge_index)
         x = F.relu(x)
         x = self.gc2(x, edge_index)
@@ -29,7 +30,7 @@ class GCN(torch.nn.Module):
 
 if __name__ == '__main__':
     fileFolder = f'../data/{dataset_name}/'
-    nodewv = fileFolder + 'gcnnodewv.dic'
+    nodewv = fileFolder + 'nodewv.dic'
     ic_relation = fileFolder + 'item_category.relation'
     ib_relation = fileFolder + 'item_brand.relation'
     ii_relation = fileFolder + 'item_item.relation'
@@ -40,21 +41,28 @@ if __name__ == '__main__':
     user_item = pd.read_csv(ui_relation, header=None, sep=',')[[0, 1]]
 
     x = torch.randn(13305,100).to(device)
+    print(x)
     edge_index = item_brand.to_numpy().tolist() + item_category.to_numpy().tolist() + item_item.to_numpy().tolist() + user_item.to_numpy().tolist()
 
     edge_index = torch.tensor(edge_index).to(device)
-    data = Data(x,edge_index.t().contiguous())
+    data = Data(x=x,edge_index=edge_index.t().contiguous(),y=x)
 
     print(data)
 
     model = GCN(100,16,100).to(device)
+    loss = torch.nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(),lr=0.01)
 
-    print(model)
     print("GCN begin.......")
-    out = model(data)
-    print(x)
-    print(x.shape)
+    for epoch in range(10):
+        print(f'epoch：{epoch}')
+        out = model(data.x, data.edge_index)
+        loss_score = loss(out.to(device),data.x.to(device)).to(device)
 
+        optimizer.zero_grad()
+        loss_score.backward()
+        optimizer.step()
+    print(out)
     nodewv_dic = defaultdict(torch.Tensor)
     for index,list in enumerate(out):
         nodeid = index

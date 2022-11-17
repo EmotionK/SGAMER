@@ -109,7 +109,7 @@ def load_ui_metapath_instances_emb(metapath_list, ui_metapath_emb_folder, user_n
             if (u,i) not in this_user_ui_instances_embs.keys():
                 this_user_ui_instances_embs[(u,i)] = user_item_direct_emb[u].unsqueeze(0)
             else:
-                this_user_ui_instances_embs[(u, i)] = torch.cuda.FloatTensor(this_user_ui_instances_embs[(u, i)])
+                this_user_ui_instances_embs[(u, i)] = torch.FloatTensor(this_user_ui_instances_embs[(u, i)])
         len(ui_dict[u]) == len(this_user_ui_instances_embs)#12,11 assert
         ui_instances_embs[u] = this_user_ui_instances_embs
     return ui_instances_embs

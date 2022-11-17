@@ -388,7 +388,7 @@ def neg_sample(fileFolder):
             training_link = training_link + positive + negative
 
         training_link_tf = pd.DataFrame(training_link)
-        training_link_tf.to_csv(fileFolder + 'training_neg_{str(NEG)}.links', header=None, index=None, sep=',')
+        training_link_tf.to_csv(fileFolder + 'training_neg_' + str(NEG) + '.links', header=None, index=None, sep=',')
 
         test_link = []
         for user_record in testing:
@@ -400,7 +400,7 @@ def neg_sample(fileFolder):
             test_link = test_link + positive + negative
 
         test_link_tf = pd.DataFrame(test_link)
-        test_link_tf.to_csv(fileFolder + 'test_neg_{str(NEG)}.links', header=None, index=None, sep=',')
+        test_link_tf.to_csv(fileFolder +'testing_neg_' + str(NEG) + '.links', header=None, index=None, sep=',')
         print(f'save neg {NEG} sampled links ... finish')
 
 
