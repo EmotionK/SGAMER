@@ -69,8 +69,8 @@ def instances_slf_att(input_tensor):
 
     distance_slf_att = nn.MSELoss()
 
-    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.05, weight_decay=0.9)
-    optimizer_gru = torch.optim.Adam(instances_gru.parameters(),lr=0.05)
+    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
+    optimizer_gru = torch.optim.Adam(instances_gru.parameters(),lr=0.01)
 
     num_epochs_slf_att = 50
     for epoch in range(num_epochs_slf_att):
@@ -101,27 +101,27 @@ def item_attention(item_input, ii_path):
     :return: item att output
     """
     item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=100).to(device)
-    item_item_gru = torch.nn.GRU(input_size=100, hidden_size=100, num_layers=1, batch_first=True).to(device)
+    #item_item_gru = torch.nn.GRU(input_size=100, hidden_size=100, num_layers=1, batch_first=True).to(device)
 
     distance_att = nn.MSELoss()
 
     optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.01, weight_decay=0.00005)
-    optimizer_gru = torch.optim.Adam(item_item_gru.parameters(),lr=0.01)
+    #optimizer_gru = torch.optim.Adam(item_item_gru.parameters(),lr=0.01)
 
     num_epoch = 10
     for epoch in range(num_epoch):
-        gru_out,h_n = item_item_gru(ii_path.to(device))
-        output = item_atten(item_input.to(device), gru_out.to(device)).to(device)\
+        #gru_out,h_n = item_item_gru(ii_path.to(device))
+        output = item_atten(item_input.to(device), ii_path.to(device)).to(device)\
 
         loss_slf = distance_att(output, item_input.to(device))
 
         optimizer_att.zero_grad()
-        optimizer_gru.zero_grad()
+        #optimizer_gru.zero_grad()
 
         loss_slf.backward()
 
         optimizer_att.step()
-        optimizer_gru.step()
+        #optimizer_gru.step()
 
     att_embeddings = output.detach().cpu().numpy() # [1,100]
     torch.cuda.empty_cache()
@@ -150,7 +150,7 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
         else:
             all_neg.append((index, user, item))
     recommendation = Recommendation(100).to(device)
-    optimizer = torch.optim.Adam(recommendation.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.01)
     for epoch in range(100):
         train_start_time = time.time()
         running_loss = 0.0
@@ -197,7 +197,7 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
                 this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item()) #用户i对于每一个item（包括正例和负例）的推荐得分
-            normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
+            normalized_scores = [((u_i_score - min(scores)) / ((max(scores) - min(scores)))) for u_i_score in scores]
             pos_id = len(scores) - 1 #正例在scores中的位置
             s = np.array(scores)
             sorted_s = np.argsort(-s)# 分数的位置从大到小排序
@@ -286,7 +286,7 @@ if __name__ == '__main__':
     # get train and test links
     N = negative_num  # for each user item, there are N negative samples.
     train_file = folder + 'training_neg_' + str(N) + '.links'
-    test_file = folder + 'test_neg_' + str(N) + '.links'
+    test_file = folder + 'testing_neg_' + str(N) + '.links'
     train_data, test_data = load_train_test_data(train_file, test_file)
 
     # load users id and items id
@@ -336,7 +336,7 @@ if __name__ == '__main__':
             if len(ui_all_paths_emb[u][(u, i)]) == 1:
                 this_user_ui_paths_att_emb[(u, i)] = ui_all_paths_emb[u][(u, i)]
             else:
-                slf_att_input = torch.FloatTensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
+                slf_att_input = torch.cuda.FloatTensor(ui_all_paths_emb[u][(u, i)]).unsqueeze(0)
                 this_user_ui_paths_att_emb[(u, i)] = instances_slf_att(slf_att_input)
                 # user-item instances to one. for each user-item pair, only one instance is needed.
                 max_pooling_input = torch.from_numpy(this_user_ui_paths_att_emb[(u, i)])

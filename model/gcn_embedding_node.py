@@ -6,10 +6,9 @@ import torch
 import pandas as pd
 #from networkx import edges
 from torch.nn import functional as F
-from torch_geometric.data import Data
+#from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 
-from model.embedding_user_item import lr
 
 dataset_name = 'Amazon_Musical_Instruments'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -45,19 +44,18 @@ if __name__ == '__main__':
     edge_index = item_brand.to_numpy().tolist() + item_category.to_numpy().tolist() + item_item.to_numpy().tolist() + user_item.to_numpy().tolist()
 
     edge_index = torch.tensor(edge_index).to(device)
-    data = Data(x=x,edge_index=edge_index.t().contiguous(),y=x)
+    #data = Data(x=x,edge_index=edge_index.t().contiguous(),y=x)
 
-    print(data)
 
     model = GCN(100,16,100).to(device)
     loss = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(),lr=0.01)
+    optimizer = torch.optim.Adam(model.parameters(),lr=0.1)
 
     print("GCN begin.......")
-    for epoch in range(10):
+    for epoch in range(100):
         print(f'epoch：{epoch}')
-        out = model(data.x, data.edge_index)
-        loss_score = loss(out.to(device),data.x.to(device)).to(device)
+        out = model(x, edge_index.t().contiguous())
+        loss_score = loss(out.to(device),x.to(device)).to(device)
 
         optimizer.zero_grad()
         loss_score.backward()

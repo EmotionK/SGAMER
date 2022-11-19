@@ -1,0 +1,116 @@
+nohup: ignoring input
+run.py device: cuda
+/home/ubuntu/model/PaperModel/model/../model/util/data_utils.py:13: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  nodewv_tensor = torch.Tensor(nodewv_tensor)
+labels.shape: torch.Size([585800])
+loading node embedding, all user-item and item-item paths embedding...finished
+start training user-item instance self attention module...
+user  0 time:  3.814697265625e-06
+user  100 time:  241.26575922966003
+user  200 time:  482.05701518058777
+user  300 time:  720.0325887203217
+user  400 time:  962.407915353775
+user  500 time:  1205.6509234905243
+user  600 time:  1449.7096998691559
+user  700 time:  1691.6477482318878
+user  800 time:  1932.5008335113525
+user  900 time:  2178.0471987724304
+user  1000 time:  2422.0295157432556
+user  1100 time:  2666.047219514847
+user  1200 time:  2911.1262817382812
+user  1300 time:  3158.350874900818
+user  1400 time:  3404.4595279693604
+start training item-item instance self attention module...
+user  0 time:  1.0967254638671875e-05
+user  100 time:  226.30386328697205
+user  200 time:  443.4701371192932
+user  300 time:  650.9653029441833
+user  400 time:  865.8552038669586
+user  500 time:  1078.8478832244873
+user  600 time:  1293.192176103592
+user  700 time:  1507.726492881775
+user  800 time:  1725.1136186122894
+user  900 time:  1943.5775532722473
+user  1000 time:  2160.5974168777466
+user  1100 time:  2375.418880701065
+user  1200 time:  2590.531608104706
+user  1300 time:  2808.285801410675
+user  1400 time:  3022.5812034606934
+start updating user and item embedding...
+user_name:1450
+user  0 time:  1.1444091796875e-05
+user  100 time:  16.876267194747925
+user  200 time:  33.96942377090454
+user  300 time:  50.50687837600708
+user  400 time:  67.1408760547638
+user  500 time:  83.88344836235046
+user  600 time:  100.61727643013
+user  700 time:  117.74885106086731
+user  800 time:  134.5538785457611
+user  900 time:  151.35016441345215
+user  1000 time:  168.58619928359985
+user  1100 time:  185.18598437309265
+user  1200 time:  201.96808099746704
+user  1300 time:  218.8009421825409
+user  1400 time:  235.66541409492493
+start training recommendation module...
+/home/ubuntu/model/PaperModel/model/recommendation_model.py:56: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
+  fe = F.log_softmax(output)
+epoch: 0, training loss: 329.82339660810976, train time: 22.911710500717163
+epoch: 1, training loss: 330.74701161071425, train time: 22.205578327178955
+epoch: 2, training loss: 332.2195373018476, train time: 23.210299968719482
+epoch: 3, training loss: 332.21612026898947, train time: 22.650776624679565
+epoch: 4, training loss: 333.9088982155081, train time: 22.55422806739807
+epoch: 5, training loss: 334.20152677410806, train time: 23.018345832824707
+epoch: 6, training loss: 337.0018209630216, train time: 22.989973306655884
+epoch: 7, training loss: 335.8717807075882, train time: 23.087851524353027
+epoch: 8, training loss: 336.6413030078038, train time: 23.027671575546265
+epoch: 9, training loss: 335.7446378492459, train time: 22.96589207649231
+epoch: 10, training loss: 339.9878486626185, train time: 22.624500274658203
+epoch: 11, training loss: 346.79422539568986, train time: 22.7592511177063
+epoch: 12, training loss: 347.8041800912324, train time: 22.626525402069092
+epoch: 13, training loss: 347.8136926108127, train time: 22.573796272277832
+epoch: 14, training loss: 350.64452166527917, train time: 23.31132698059082
+epoch: 15, training loss: 348.0084672871162, train time: 22.979132413864136
+epoch: 16, training loss: 347.68791932637396, train time: 23.0041925907135
+epoch: 17, training loss: 349.1887639696379, train time: 23.224844932556152
+epoch: 18, training loss: 347.7273276262749, train time: 22.968596935272217
+epoch: 19, training loss: 348.76830466334286, train time: 22.848863124847412
+epoch: 20, training loss: 348.2936386748279, train time: 23.23192524909973
+epoch: 21, training loss: 350.1874180576415, train time: 23.244582414627075
+epoch: 22, training loss: 348.9752122381833, train time: 22.71580171585083
+epoch: 23, training loss: 349.797413597742, train time: 22.77366065979004
+epoch: 24, training loss: 347.79370014261804, train time: 23.19992208480835
+epoch: 25, training loss: 350.7857060365295, train time: 22.88855528831482
+epoch: 26, training loss: 350.9009659989715, train time: 23.268771648406982
+epoch: 27, training loss: 347.7251106163967, train time: 23.15020179748535
+epoch: 28, training loss: 350.4759706579116, train time: 22.63521099090576
+epoch: 29, training loss: 350.50753335655463, train time: 23.12569546699524
+epoch: 30, training loss: 346.0830400431187, train time: 22.892433881759644
+epoch: 31, training loss: 349.14562343303805, train time: 22.458890914916992
+epoch: 32, training loss: 349.02636928608626, train time: 23.100148677825928
+epoch: 33, training loss: 348.50653128459817, train time: 22.949058294296265
+epoch: 34, training loss: 349.44002265219115, train time: 22.92511820793152
+epoch: 35, training loss: 348.0882826186498, train time: 23.373429775238037
+epoch: 36, training loss: 348.6919237758775, train time: 22.89263916015625
+epoch: 37, training loss: 348.2722930406144, train time: 22.468448638916016
+epoch: 38, training loss: 349.8019874270358, train time: 23.172972679138184
+epoch: 39, training loss: 348.79922208767675, train time: 22.888797283172607
+epoch: 40, training loss: 346.0802532177331, train time: 22.442930459976196
+epoch: 41, training loss: 347.91487727802087, train time: 22.56525468826294
+epoch: 42, training loss: 348.88699237715673, train time: 22.48591947555542
+epoch: 43, training loss: 349.2033096861669, train time: 22.691863536834717
+epoch: 44, training loss: 350.9593304277332, train time: 22.92955780029297
+epoch: 45, training loss: 349.53172583339256, train time: 23.22831130027771
+epoch: 46, training loss: 348.73041710309553, train time: 23.35511541366577
+epoch: 47, training loss: 348.38559430476016, train time: 22.06860041618347
+epoch: 48, training loss: 348.92445802139264, train time: 22.970929384231567
+epoch: 49, training loss: 347.1789316603681, train time: 22.649224519729614
+Traceback (most recent call last):
+  File "/home/ubuntu/model/PaperModel/model/recommendation_model.py", line 436, in <module>
+    rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data)
+  File "/home/ubuntu/model/PaperModel/model/recommendation_model.py", line 200, in rec_net
+    normalized_scores = [((u_i_score - min(scores)) / ((max(scores) - min(scores)))) for u_i_score in scores]
+  File "/home/ubuntu/model/PaperModel/model/recommendation_model.py", line 200, in <listcomp>
+    normalized_scores = [((u_i_score - min(scores)) / ((max(scores) - min(scores)))) for u_i_score in scores]
+ZeroDivisionError: float division by zero
