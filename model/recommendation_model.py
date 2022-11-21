@@ -26,7 +26,6 @@ user_n_items = 4 # for each user, it has n items
 class Recommendation(nn.Module):
     def __init__(self, in_features):
         """
-
         :param in_features: mlp input latent: here 100
         :param out_features:  mlp classification number, here neg+1
         """
@@ -45,7 +44,6 @@ class Recommendation(nn.Module):
 
     def forward(self, item_emb, sequence_emb):
         """
-
         :param sequence_emb
         :return:
         """
@@ -56,36 +54,29 @@ class Recommendation(nn.Module):
         fe = F.log_softmax(output)
         return fe
 
-def GRU(input_tensor):
-    instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
-    r_out, h_state = instances_gru(input_tensor.to(device))
-    print(r_out.shape)
-    print(h_state.shape)
-    return r_out
+class GRU(nn.Module):
+    def __init__(self, user_item_dim):
+        super(GRU, self).__init__()
+        self.instances_slf_att = Self_Attention_Network(user_item_dim=user_item_dim).to(device)
+        self.instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
+      
+    def forward(self,input_tensor):
+        r_out, h_state = self.instances_gru(input_tensor.to(device))
+        out = self.instances_slf_att(r_out.to(device))
+        return out
 
 def instances_slf_att(input_tensor):
-    instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
-    instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
-
+    #instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
+    instances_slf_att = GRU(user_item_dim=latent_size)
     distance_slf_att = nn.MSELoss()
-
     optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
-    optimizer_gru = torch.optim.Adam(instances_gru.parameters(),lr=0.01)
-
     num_epochs_slf_att = 50
     for epoch in range(num_epochs_slf_att):
-        gru_out,h_n = instances_gru(input_tensor.to(device))
-        output = instances_slf_att(gru_out)
-
+        output = instances_slf_att(input_tensor.to(device))
         loss_slf = distance_slf_att(output.to(device), input_tensor.to(device)).to(device)
-
         optimizer_slf_att.zero_grad()
-        optimizer_gru.zero_grad()
-
         loss_slf.backward()
-
         optimizer_slf_att.step()
-        optimizer_gru.step()
     slf_att_embeddings = output.detach().cpu().numpy()
     torch.cuda.empty_cache()
     return slf_att_embeddings
@@ -101,33 +92,21 @@ def item_attention(item_input, ii_path):
     :return: item att output
     """
     item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=100).to(device)
-    #item_item_gru = torch.nn.GRU(input_size=100, hidden_size=100, num_layers=1, batch_first=True).to(device)
-
     distance_att = nn.MSELoss()
-
     optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.01, weight_decay=0.00005)
-    #optimizer_gru = torch.optim.Adam(item_item_gru.parameters(),lr=0.01)
-
     num_epoch = 10
     for epoch in range(num_epoch):
-        #gru_out,h_n = item_item_gru(ii_path.to(device))
-        output = item_atten(item_input.to(device), ii_path.to(device)).to(device)\
-
+        output = item_atten(item_input.to(device), ii_path.to(device)).to(device)
         loss_slf = distance_att(output, item_input.to(device))
-
         optimizer_att.zero_grad()
-        #optimizer_gru.zero_grad()
-
         loss_slf.backward()
-
         optimizer_att.step()
-        #optimizer_gru.step()
 
     att_embeddings = output.detach().cpu().numpy() # [1,100]
     torch.cuda.empty_cache()
     return att_embeddings
 
-def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
+def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
     best_hit_1 = 0.0
     best_hit_5 = 0.0
     best_hit_10 = 0.0
@@ -150,7 +129,7 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
         else:
             all_neg.append((index, user, item))
     recommendation = Recommendation(100).to(device)
-    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.01)
+    optimizer = torch.optim.Adam(recommendation.parameters(), lr=1e-3)
     for epoch in range(100):
         train_start_time = time.time()
         running_loss = 0.0
@@ -183,24 +162,24 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
         all_ndcg_20 = 0
         all_ndcg_50 = 0
         for i, u_v_p in enumerate(all_pos):
-            start = negative_num * i
-            end = negative_num * i + negative_num
+            start = N * i
+            end = N * i + N
             p_and_n_seq = all_neg[start:end]
             p_and_n_seq.append(tuple(u_v_p))  # N+1 items
 
             # 找到embedding，求出score
-            scores = []#用户i对于每一个item（包括正例和负例）的推荐得分
+            scores = []
             for index, userid, itemid in p_and_n_seq:
                 # calculate score of user and item
                 user_emb = node_emb[userid].reshape((1, 1, 100)).to(device)
                 this_item_emb = node_emb[itemid].reshape((1, 1, 100)).to(device)
                 this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
-                scores.append(score.item()) #用户i对于每一个item（包括正例和负例）的推荐得分
-            normalized_scores = [((u_i_score - min(scores)) / ((max(scores) - min(scores)))) for u_i_score in scores]
-            pos_id = len(scores) - 1 #正例在scores中的位置
+                scores.append(score.item())
+            normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
+            pos_id = len(scores) - 1
             s = np.array(scores)
-            sorted_s = np.argsort(-s)# 分数的位置从大到小排序
+            sorted_s = np.argsort(-s)
 
             if sorted_s[0] == pos_id:
                 hit_num_1 += 1
@@ -274,10 +253,10 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data):
               f" train_time:{train_time:.2f} | test_time:{testing_time:.2f}")
     print('training finish')
 
-dataset_name='Amazon_Musical_Instruments'
 
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
+    dataset_name='Amazon_Musical_Instruments'
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -433,4 +412,4 @@ if __name__ == '__main__':
         shuffle=False,  #
         num_workers=1,  #
     )
-    rec_net(train_loader, test_loader, node_emb, sequence_tensor,test_data)
+    rec_net(train_loader, test_loader, node_emb, sequence_tensor)
