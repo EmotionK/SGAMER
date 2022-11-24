@@ -25,7 +25,9 @@ import pickle
 from collections import defaultdict
 
 
-dataset_name='Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Automotive'
+
 
 if __name__ == '__main__':
 #def user_history(dataset_name):

@@ -84,14 +84,6 @@ def load_ui_metapath_instances_emb(metapath_list, ui_metapath_emb_folder, user_n
         this_user_ui_instances_embs = defaultdict() # {(u,i):[array1, array2,,,], (u,i):[,,]}
         for i in ui_dict[u]: #i为与用户u交互的item列表
             for ele in ui_metapath: #ele为embedding字典
-                '''
-(1449, 7025): [array([ 0.00460529,  0.02161333,  0.077279  , -0.02057446,  0.05488081,
-                .....
-       -0.14174692,  0.05165021, -0.05346007, -0.06376961,  0.11052442,
-        0.03616726, -0.02823605, -0.08661178,  0.03353357,  0.01065839,
-       -0.00361851,  0.01648059, -0.04148792, -0.00932522, -0.01883843,
-       -0.06178925, -0.02016797, -0.09854103, -0.02004039, -0.0945473 ],
-                '''
                 #print(ele)
                 # exit(0)
                 if (u,i) in ele.keys():
@@ -110,7 +102,8 @@ def load_ui_metapath_instances_emb(metapath_list, ui_metapath_emb_folder, user_n
                 this_user_ui_instances_embs[(u,i)] = user_item_direct_emb[u].unsqueeze(0)
             else:
                 this_user_ui_instances_embs[(u, i)] = torch.cuda.FloatTensor(this_user_ui_instances_embs[(u, i)])
-        len(ui_dict[u]) == len(this_user_ui_instances_embs)#12,11 assert
+        
+        assert len(ui_dict[u]) == len(this_user_ui_instances_embs)#12,11 assert
         ui_instances_embs[u] = this_user_ui_instances_embs
     return ui_instances_embs
 
@@ -143,7 +136,8 @@ def load_ii_metapath_instances_emb(metapath_emb_folder, user_num, ui_dict, item_
                 continue
             if (i1, i2) not in this_user_ii_instances_embs.keys():  # if there is no this path in metapath list, use item-item path emb
                 this_user_ii_instances_embs[(i1, i2)] = item_item_direct_emb[edges_id_dict[(i1, i2)]].unsqueeze(0)
-        (num_item - 1) == len(this_user_ii_instances_embs) #assert
+        
+        assert (num_item - 1) == len(this_user_ii_instances_embs) #assert
         ii_instances_embs[u] = this_user_ii_instances_embs
     return ii_instances_embs
 

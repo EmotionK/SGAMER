@@ -54,22 +54,11 @@ class Recommendation(nn.Module):
         fe = F.log_softmax(output)
         return fe
 
-class GRU(nn.Module):
-    def __init__(self, user_item_dim):
-        super(GRU, self).__init__()
-        self.instances_slf_att = Self_Attention_Network(user_item_dim=user_item_dim).to(device)
-        self.instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
-      
-    def forward(self,input_tensor):
-        r_out, h_state = self.instances_gru(input_tensor.to(device))
-        out = self.instances_slf_att(r_out.to(device))
-        return out
-
 def instances_slf_att(input_tensor):
     #instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
-    instances_slf_att = GRU(user_item_dim=latent_size)
+    instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
     distance_slf_att = nn.MSELoss()
-    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
+    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.05, weight_decay=0.00005)
     num_epochs_slf_att = 50
     for epoch in range(num_epochs_slf_att):
         output = instances_slf_att(input_tensor.to(device))
@@ -93,7 +82,7 @@ def item_attention(item_input, ii_path):
     """
     item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=100).to(device)
     distance_att = nn.MSELoss()
-    optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.01, weight_decay=0.00005)
+    optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.05, weight_decay=0.00005)
     num_epoch = 10
     for epoch in range(num_epoch):
         output = item_atten(item_input.to(device), ii_path.to(device)).to(device)
@@ -256,8 +245,8 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
 
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
-    dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
+    #dataset_name = 'Amazon_Musical_Instruments'
+    dataset_name = 'Amazon_Automotive'
     
     folder = f'../data/{dataset_name}/'
 

@@ -838,11 +838,20 @@ def form_ii_paths(user_history_file, metapaths_folder, output_filename, metapath
     print(avg_randomed)
 
 
-dataset_name='Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Automotive'
+
 user_number = 1450
-item_number = 9029
-category_number = 540
-brand_number = 1815
+#item_number = 9029 #Musical_Instrument
+#category_number = 540 #Musical_Instrument
+#brand_number = 1815 #Musical_Instrument
+
+item_number = 14064 #Automotive
+category_number = 1610 #Automotive
+brand_number = 3404 #Automotive
+
+
+
 if __name__ == '__main__':
 #def gen_instances(dataset_name,user_number,item_number,category_number,brand_number):
     folder = f'../data/{dataset_name}/'

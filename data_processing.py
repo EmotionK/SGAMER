@@ -54,7 +54,7 @@ def get_user_items_num_data(data,fileFolder):
     for userId in re_user:
         user_items = select_data_flag[select_data_flag['userId'] == userId]
         if len(user_items) < user_items_num:
-            # select_data = select_data.append(user_items,ignore_index=True)
+            #select_data = select_data.append(user_items,ignore_index=True)
             continue
         new_user_items = user_items.nlargest(user_items_num, 'timestamp')
         select_data = select_data.append(new_user_items, ignore_index=True)
@@ -409,8 +409,11 @@ def data_processing(datasetName):
     dataset_name = datasetName
     print(f'device: {device}')
     fileFolder = f'./data/{dataset_name}/'
-    data = pd.read_csv(f'./dataset/{dataset_name}/ratings_{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])
-    print(data.shape) #(1512530, 4)
+    data = pd.read_csv(f'./dataset/{dataset_name}/{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])
+    
+    data.drop_duplicates(subset=['itemId','userId'],inplace=True) #删除重复的数据
+    
+    print(data.shape) #(1512530, 4) 7990166
 
     get_user_items_num_data(data,fileFolder) #获取与用户交互的最近的12个item的整体数据
     get_item_meta(fileFolder)  # get items metas 获取每个项目的category、brand、also_buy
