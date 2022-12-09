@@ -41,7 +41,7 @@ if __name__ == '__main__':
     testing = []
     training = []
 
-    '''
+
     """
     把nodewv转化为dic,或者是tensor
     """
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     print("node.feature done")
     print(len(nodewv_dic))  # 26333
-    '''
+    
 
 
     user_history_edges2id = pickle.load(open(folder + 'user_history.edges2id', 'rb'))

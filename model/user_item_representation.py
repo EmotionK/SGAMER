@@ -16,9 +16,9 @@ import pandas as pd
 from collections import defaultdict
 import pickle
 
-#dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 
 if __name__ == '__main__':
 #def user_item_representation(dataset_name):

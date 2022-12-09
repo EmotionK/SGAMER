@@ -364,7 +364,7 @@ def split_train_test(fileFolder):
 
 ##negative sample
 def neg_sample(fileFolder):
-    NEGS = [5, 100, 500]
+    NEGS = [100]
     type2id = pickle.load(open(fileFolder + 'map.type2id','rb'))
     all_items = set(type2id['item'])
     training = pickle.load(open(fileFolder + 'training', 'rb'))
@@ -404,22 +404,47 @@ def neg_sample(fileFolder):
         print(f'save neg {NEG} sampled links ... finish')
 
 
+def generate_hin(fileFolder):
+    with open(f'{fileFolder}/{dataset_name}.hin','w') as HIN:
+        with open(f'./data/{dataset_name}/user_history.txt','r') as UIH:
+            for line in UIH.readlines():
+                node_list = line.split(" ")
+                userId = node_list[0]
+                for index in range(1,13):
+                    HIN.write(f'u:{userId} i:{node_list[index]} 1 u:i'+'\n')
+
+        IB = pd.read_csv(f'{fileFolder}/item_brand.relation',header=None)
+        for index,row in IB.iterrows():
+            HIN.write(f'i:{row[0]} b:{row[1]} 1 i:b'+'\n')
+        print(len(set(IB.iloc[:,1])))
+
+        IC = pd.read_csv(f'{fileFolder}/item_category.relation',header=None)
+        for index, row in IC.iterrows():
+            HIN.write(f'i:{row[0]} c:{row[1]} 1 i:c' + '\n')
+
+        II = pd.read_csv(f'{fileFolder}/item_item.relation',header=None)
+        for index, row in II.iterrows():
+            HIN.write(f'i:{row[0]} i:{row[1]} 1 i:i' + '\n')
+
+
 def data_processing(datasetName):
     global dataset_name
     dataset_name = datasetName
     print(f'device: {device}')
     fileFolder = f'./data/{dataset_name}/'
-    data = pd.read_csv(f'./dataset/{dataset_name}/{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])
-    
-    data.drop_duplicates(subset=['itemId','userId'],inplace=True) #删除重复的数据
+    data = pd.read_csv(f'./dataset/{dataset_name}/{dataset_name}.csv', header=None, sep=',',names=['itemId','userId','ratings','timestamp'])  
     
     print(data.shape) #(1512530, 4) 7990166
+
+    data.drop_duplicates(subset=['itemId','userId'],inplace=True)
+    print(data.shape)
 
     get_user_items_num_data(data,fileFolder) #获取与用户交互的最近的12个item的整体数据
     get_item_meta(fileFolder)  # get items metas 获取每个项目的category、brand、also_buy
     user_number,item_number,new_data,all_node_number,category_number,brand_number = generate_ids(fileFolder) #为user,item,category,brand生成唯一标识
     gen_graph(all_node_number,fileFolder) #generate graph
     gen_ui_history(fileFolder)#user history
+    generate_hin(fileFolder)
     split_train_test(fileFolder)#split_train_test
     neg_sample(fileFolder)#negative sample
 

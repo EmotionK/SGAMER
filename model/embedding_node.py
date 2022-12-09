@@ -22,12 +22,13 @@ from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
 #dataset_name='Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-
+#dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Toys_Games'
 
 user_number = 1450
-#item_number = 9029 #Musical_Instruments
-item_number = 14064 #Automotive
+#item_number = 9660 #Musical_Instruments
+#item_number = 14064 #Automotive
+item_number = 12836 #Toys_Games
 
 if __name__ == '__main__':
 #def embedding_node(dataset_name,user_number,item_number):

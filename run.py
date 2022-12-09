@@ -11,12 +11,14 @@ from data_processing import data_processing
 #from model.user_item_representation import user_item_representation
 
 base_path = os.getcwd() + '/' #获取当前路径
-choose_dataset = 2 #1:Amazon_Music_Instrument
+choose_dataset = 1 #1:Amazon_Music_Instrument
 
 if choose_dataset==1:
     dataset_name = 'Amazon_Musical_Instruments'
 elif choose_dataset==2:
     dataset_name = 'Amazon_Automotive'
+elif choose_dataset==3:
+    dataset_name ='Amazon_Toys_Games'
 
 print(f'{dataset_name} data processing.....')
 user_number,item_number,category_number,brand_number = data_processing(dataset_name)

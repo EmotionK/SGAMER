@@ -1,4 +1,4 @@
-import sys
+import sys,ast
 sys.path.append('../../')
 import argparse
 import random
@@ -176,7 +176,7 @@ class UIPath:
                 cc = c[0]
                 if ii in self.ic_dict and cc in self.ic_dict[ii] and ii != e_i:
                     sim = i[1]
-                    if sim > 0.5:
+                    if sim>0.5:
                         ic_list.append([ii, cc, sim])
         ic_list.sort(key=lambda x: x[2], reverse=True)
         ic_list = ic_list[:min(5, len(ic_list))]
@@ -212,7 +212,7 @@ class UIPath:
                 bb = b[0]
                 if ii in self.ib_dict and bb in self.ib_dict[ii] and ii != e_i:
                     sim = i[1]
-                    if sim > 0.5:
+                    if sim>0.5:
                         ib_list.append([ii, bb, sim])
         ib_list.sort(key=lambda x: x[2], reverse=True)
         ib_list = ib_list[:min(5, len(ib_list))]
@@ -838,17 +838,51 @@ def form_ii_paths(user_history_file, metapaths_folder, output_filename, metapath
     print(avg_randomed)
 
 
-#dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
+def embedding_to_index(folder,dataset_name):
+    embedding = pickle.load(open(f'{folder}/experi_data/node_emb/{dataset_name}_950_100.emb','rb'))['o_embedding']
+    nodeId_to_index = pickle.load(open(f'{folder}/{dataset_name}_id_to_index.p','rb'))['out_mapping']
+    
+    trans_metric = pickle.load(open(f'{folder}/experi_data/record/trans_metric_950_100','rb'))
+    print(trans_metric)
+    node_to_metapath_metric_x = np.squeeze(trans_metric['metapath_type_metric_x'])
+    node_to_metapath_metric_h = np.squeeze(trans_metric['metapath_type_metric_h'])
+    node_to_metapath_metric_y = np.squeeze(trans_metric['metapath_type_metric_y'])
+    filter_x = np.reshape(node_to_metapath_metric_x[0, :], newshape=[1, -1])
+    filter_h = np.reshape(node_to_metapath_metric_h[0, :], newshape=[1, -1])
+    filter_y = np.reshape(node_to_metapath_metric_y[0, :], newshape=[1, -1])
+    #embedding = embedding * filter_y
+
+    node_embedding_dic = defaultdict(torch.Tensor)
+    with open(f'{folder}/{dataset_name}.config') as IN:
+        node_types = ast.literal_eval(IN.readline())
+    i = 0
+    for node_type in node_types:
+        for k in range(len(nodeId_to_index[node_type])):
+            node_id = int(nodeId_to_index[node_type][k])
+            if node_id not in node_embedding_dic.keys():
+                node_embedding_dic[node_id] = torch.Tensor(embedding[i,:])
+            i += 1
+    print(len(node_embedding_dic))
+    pickle.dump(node_embedding_dic,open(f'{folder}/node_embedding.dic','wb'))
+
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 
 user_number = 1450
-#item_number = 9029 #Musical_Instrument
-#category_number = 540 #Musical_Instrument
-#brand_number = 1815 #Musical_Instrument
 
-item_number = 14064 #Automotive
-category_number = 1610 #Automotive
-brand_number = 3404 #Automotive
+item_number = 9660 #Musical_Instrument
+category_number = 533 #Musical_Instrument
+brand_number = 1953 #Musical_Instrument
+
+#item_number = 14064 #Automotive
+#category_number = 1610 #Automotive
+#brand_number = 3404 #Automotive
+
+#toys_games
+#item_number = 12836
+#category_number = 1610
+#brand_number = 3404
 
 
 
@@ -859,10 +893,12 @@ if __name__ == '__main__':
     ib_relation_file = folder + 'item_brand.relation'
     ui_relation_file = folder + 'user_item.relation'
     user_history_file = folder + 'user_history.txt'
-    node_emb_dic = folder + 'nodewv.dic'
+    node_emb_dic = folder + 'node_embedding.dic'
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapahts_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     output_filename = folder + 'ii_random_form.paths'
+
+    embedding_to_index(folder,dataset_name)
 
     UIPath(ib_relation_file=ib_relation_file, ic_relation_file=ic_relation_file,
                            ui_relation_file=ui_relation_file,

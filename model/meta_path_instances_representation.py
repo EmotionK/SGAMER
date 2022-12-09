@@ -74,9 +74,9 @@ def instance_emb(metapath_file, output_file):
     pickle.dump(ui_path_vectors, open(output_file, 'wb'))
 
 
-#dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 
 if __name__ == '__main__':
 #def meta_path_instances_representation(dataset_name):

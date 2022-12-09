@@ -15,14 +15,15 @@ from collections import defaultdict
 import pickle
 import pandas as pd
 
-#dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 
 if __name__ == '__main__':
 #def item_item_repersentation(dataset_name):
     folder = f'../data/{dataset_name}/'
 
+    '''
     user_item_relation = pd.read_csv(folder + 'user_item.relation', header=None, sep=',')
     new = user_item_relation.sort_values(2)  # 按照时间戳从大到小排序
 
@@ -56,7 +57,8 @@ if __name__ == '__main__':
         id_edges[i] = edge
     pickle.dump(edges_id, open(folder + 'user_history.edges2id', 'wb'))
     pickle.dump(id_edges, open(folder + 'user_history.id2edges', 'wb'))
-
+    '''
+    
     # 2
 
     edges_id = pickle.load(open(folder + 'user_history.edges2id', 'rb'))

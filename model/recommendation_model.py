@@ -129,8 +129,8 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
         else:
             all_neg.append((index, user, item))
     recommendation = Recommendation(100).to(device)
-    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.001)
-    for epoch in range(100):
+    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.003)
+    for epoch in range(500):
         train_start_time = time.time()
         running_loss = 0.0
         for step, batch in enumerate(train_loader):
@@ -258,7 +258,8 @@ if __name__ == '__main__':
 #def recommendation_model(dataset_name):
     dataset_name = 'Amazon_Musical_Instruments'
     #dataset_name = 'Amazon_Automotive'
-    
+    #dataset_name = 'Amazon_Toys_Games'
+
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -279,7 +280,7 @@ if __name__ == '__main__':
     item_num = len(items_list)
 
     # load node embeds
-    node_emb_file = folder + 'nodewv.dic'
+    node_emb_file = folder + 'node_embedding.dic'
     node_emb = load_node_tensor(node_emb_file)
 
     # load ui pairs
