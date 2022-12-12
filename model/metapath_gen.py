@@ -115,11 +115,11 @@ def symmetric_edge_select(metapath_list):
     return new_metapath_list
 
 
-if __name__ == '__main__':
-
-    dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
-    #dataset_name = 'Amazon_Toys_Games'
+#if __name__ == '__main__':
+def gen_metapath(dataset_name):
+    
+    global node_connection_dict
+    global edge_dict
 
     args = parse_args(dataset_name)
     input_file_path = os.path.join(args.relation_dir,args.dn+'.relation') #relation_files\cora.relation

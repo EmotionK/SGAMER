@@ -11,7 +11,7 @@ from data_processing import data_processing
 #from model.user_item_representation import user_item_representation
 
 base_path = os.getcwd() + '/' #获取当前路径
-choose_dataset = 1 #1:Amazon_Music_Instrument
+choose_dataset = 2 #1:Amazon_Music_Instrument
 
 if choose_dataset==1:
     dataset_name = 'Amazon_Musical_Instruments'

@@ -224,6 +224,7 @@ def generate_ids(fileFolder):
         category_id = name2id[row[1]]
         item_category.append([item_id, category_id])
     item_category_relation = pd.DataFrame(item_category)
+    item_category_relation.drop_duplicates(inplace=True)  # 去重
     item_category_relation.to_csv(ic_relation, header=None, index=None, sep=',')
     #item_brand
     for _, row in item_brand_df.iterrows():
@@ -231,6 +232,7 @@ def generate_ids(fileFolder):
         brand_id = name2id[row[1]]
         item_brand.append([item_id, brand_id])
     item_brand_relation = pd.DataFrame(item_brand)
+    item_brand_relation.drop_duplicates(inplace=True)#去重
     item_brand_relation.to_csv(ib_relation, header=None, index=None, sep=',')
     #item_item
     for _, row in item_item_df.iterrows():
@@ -238,6 +240,7 @@ def generate_ids(fileFolder):
         item2_id = name2id[row[1]]
         item_item.append([item1_id, item2_id])
     item_item_relation = pd.DataFrame(item_item)
+    item_item_relation.drop_duplicates(inplace=True)#去重
     item_item_relation.to_csv(ii_relation, header=None, index=None, sep=',')
     #user_item
     for _, row in user_rate_item_df.iterrows():
@@ -246,6 +249,7 @@ def generate_ids(fileFolder):
         timestamp = int(row[3])
         user_item.append([user_id, item_id, timestamp])
     user_item_relation = pd.DataFrame(user_item)
+    user_item_relation.drop_duplicates(inplace=True)#去重
     user_item_relation.to_csv(ui_relation, header=None, index=None, sep=',')
 
     for index, user in enumerate(user_set):

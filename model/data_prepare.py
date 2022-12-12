@@ -135,12 +135,8 @@ def reset_hin():
                 edge = line.strip().split(' ')  # p:15142 a:238 1 a:u
                 CR.write(f"{edge[0]} {edge[1]} 1 {edge[0].split(':')[0]}:{edge[1].split(':')[0]}"+'\n')
 
-if __name__ == '__main__':
-
-    dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
-    #dataset_name = 'Amazon_Toys_Games'
-
+#if __name__ == '__main__':
+def data_prepare(dataset_name):
 
     #reset_hin()
     args = parse_args(dataset_name)

@@ -1,0 +1,2 @@
+nohup: ignoring input
+python: can't open file '/home/ubuntu/model/PaperModel/embedding_node_mSHINE.py': [Errno 2] No such file or directory
