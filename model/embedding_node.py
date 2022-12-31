@@ -22,16 +22,26 @@ from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
 #dataset_name='Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
-dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Toys_Games'
+dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_CellPhones_Accessories'
+#dataset_name = 'Amazon_Grocery_Gourmet_Food'
 
-user_number = 1450
+user_number = 2000
 #item_number = 9660 #Musical_Instruments
-#item_number = 14064 #Automotive
-item_number = 12836 #Toys_Games
+#item_number = 12836 #Toys_Games
+item_number = 18525 #Automotive
+#item_number = 16251 #CellPhones_Accessories
+#item_number = 14283 #Grocery_Gourmet_Food
+
 
 if __name__ == '__main__':
 #def embedding_node(dataset_name,user_number,item_number):
+    
+    print('-'*100)
+    print(f'{dataset_name}......')
+    print('-'*100)
+    
     folder = f'../data/{dataset_name}/'
     number_walks = 10
     walk_length = 6  # length of path

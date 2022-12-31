@@ -7,6 +7,7 @@ import time
 from util.tf_model import mSHINE
 import util.tf_data_utils as tf_data_utils
 from metapath_gen import gen_metapath
+#from fix_metapath_gen import gen_metapath
 from data_prepare import data_prepare
 
 global config
@@ -193,6 +194,9 @@ if __name__ == "__main__":
     #dataset_name = 'Amazon_Musical_Instruments'
     dataset_name = 'Amazon_Automotive'
     #dataset_name = 'Amazon_Toys_Games'
+    #dataset_name = 'Amazon_CellPhones_Accessories'
+    #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+    
     print('-'*100) 
     print(dataset_name)
     print('-'*100)

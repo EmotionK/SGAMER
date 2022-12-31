@@ -1,0 +1,12 @@
+nohup: ignoring input
+run.py device: cuda
+----------------------------------------------------------------------------------------------------
+Amazon_CellPhones_Accessories......
+----------------------------------------------------------------------------------------------------
+/home/ubuntu/model/PaperModel/model/../model/util/data_utils.py:13: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  nodewv_tensor = torch.Tensor(nodewv_tensor)
+labels.shape: torch.Size([808000])
+loading node embedding, all user-item and item-item paths embedding...finished
+start training user-item instance self attention module...
+user  0 time:  4.0531158447265625e-06
+user  100 time:  60.66514277458191

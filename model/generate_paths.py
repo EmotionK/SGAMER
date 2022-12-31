@@ -840,10 +840,10 @@ def form_ii_paths(user_history_file, metapaths_folder, output_filename, metapath
 
 def embedding_to_index(folder,dataset_name):
     embedding = pickle.load(open(f'{folder}/experi_data/node_emb/{dataset_name}_950_100.emb','rb'))['o_embedding']
-    nodeId_to_index = pickle.load(open(f'{folder}/{dataset_name}_id_to_index.p','rb'))['out_mapping']
     
+    nodeId_to_index = pickle.load(open(f'{folder}/{dataset_name}_id_to_index.p','rb'))['out_mapping']
     trans_metric = pickle.load(open(f'{folder}/experi_data/record/trans_metric_950_100','rb'))
-    print(trans_metric)
+    #print(trans_metric)
     node_to_metapath_metric_x = np.squeeze(trans_metric['metapath_type_metric_x'])
     node_to_metapath_metric_h = np.squeeze(trans_metric['metapath_type_metric_h'])
     node_to_metapath_metric_y = np.squeeze(trans_metric['metapath_type_metric_y'])
@@ -865,35 +865,53 @@ def embedding_to_index(folder,dataset_name):
     print(len(node_embedding_dic))
     pickle.dump(node_embedding_dic,open(f'{folder}/node_embedding.dic','wb'))
 
-dataset_name = 'Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
-#dataset_name = 'Amazon_Toys_Games'
 
-user_number = 1450
 
-item_number = 9660 #Musical_Instrument
-category_number = 533 #Musical_Instrument
-brand_number = 1953 #Musical_Instrument
+user_number = 2000
+choose_dataset = 2
 
-#item_number = 14064 #Automotive
-#category_number = 1610 #Automotive
-#brand_number = 3404 #Automotive
-
-#toys_games
-#item_number = 12836
-#category_number = 1610
-#brand_number = 3404
+if choose_dataset == 1:
+    dataset_name = 'Amazon_Musical_Instruments'    
+    item_number = 9660 #Musical_Instrument
+    category_number = 533 #Musical_Instrument
+    brand_number = 1953 #Musical_Instrument
+elif choose_dataset == 2:
+    dataset_name = 'Amazon_Automotive'
+    item_number = 18525 #Automotive
+    category_number = 1720 #Automotive
+    brand_number = 3965 #Automotive
+elif choose_dataset == 3:
+    dataset_name = 'Amazon_Toys_Games'
+    item_number = 12836
+    category_number = 1610
+    brand_number = 3404
+elif choose_dataset ==4 :
+    dataset_name = 'Amazon_CellPhones_Accessories'
+    item_number = 16251
+    category_number = 198
+    brand_number = 4828
+elif choose_dataset == 5:
+    dataset_name = 'Amazon_Grocery_Gourmet_Food'
+    item_number = 14283
+    category_number = 940
+    brand_number = 4775
 
 
 
 if __name__ == '__main__':
 #def gen_instances(dataset_name,user_number,item_number,category_number,brand_number):
+    
+    print('-'*100)
+    print(f'{dataset_name}......') 
+    print('-'*100)
+
     folder = f'../data/{dataset_name}/'
     ic_relation_file = folder + 'item_category.relation'
     ib_relation_file = folder + 'item_brand.relation'
     ui_relation_file = folder + 'user_item.relation'
     user_history_file = folder + 'user_history.txt'
     node_emb_dic = folder + 'node_embedding.dic'
+    #node_emb_dic = folder + 'nodewv.dic'
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapahts_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     output_filename = folder + 'ii_random_form.paths'

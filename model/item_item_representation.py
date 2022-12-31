@@ -15,12 +15,20 @@ from collections import defaultdict
 import pickle
 import pandas as pd
 
-dataset_name = 'Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_CellPhones_Accessories'
+#dataset_name = 'Amazon_Grocery_Gourmet_Food'
+
 
 if __name__ == '__main__':
 #def item_item_repersentation(dataset_name):
+    
+    print('-'*100)
+    print(f'{dataset_name}......')
+    print('-'*100)
+    
     folder = f'../data/{dataset_name}/'
 
     '''

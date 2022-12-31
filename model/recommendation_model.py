@@ -106,7 +106,21 @@ def item_attention(item_input, ii_path):
     torch.cuda.empty_cache()
     return att_embeddings
 
-def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
+def recall_score_fun(getItems):
+    hit = 0.0
+    for item in range(101,107):
+        if item in getItems:
+            hit += 1
+    return hit/6
+
+def precision_score_fun(getItems):
+    hit = 0.0
+    for item in range(101,107):
+        if item in getItems:
+            hit += 1
+    return hit/len(getItems)
+
+def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
     best_hit_1 = 0.0
     best_hit_5 = 0.0
     best_hit_10 = 0.0
@@ -117,20 +131,38 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
     best_ndcg_10 = 0.0
     best_ndcg_20 = 0.0
     best_ndcg_50 = 0.0
+    best_recall_5 = 0.0
+    best_recall_10 = 0.0
+    best_recall_20 = 0.0
+    best_precision_5 = 0.0
+    best_precision_10 = 0.0
+    best_precision_20 = 0.0
     all_pos = []
     all_neg = []
     test_data.numpy()
+    user_pos = dict()
+    user_neg = dict()
     for index in range(test_data.shape[0]):
         user = test_data[index][0].item()
         item = test_data[index][1].item()
         link = test_data[index][2].item()
         if link == 1:
+            if user in user_pos.keys():
+                user_pos[user].append(item)
+            else:
+                user_pos[user] = []
+                user_pos[user].append(item)
             all_pos.append((index, user, item))
         else:
+            if user in user_neg.keys():
+                user_neg[user].append(item)
+            else:
+                user_neg[user] = []
+                user_neg[user].append(item)
             all_neg.append((index, user, item))
     recommendation = Recommendation(100).to(device)
-    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.002)
-    for epoch in range(500):
+    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.003)
+    for epoch in range(150):
         train_start_time = time.time()
         running_loss = 0.0
         for step, batch in enumerate(train_loader):
@@ -146,7 +178,7 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
         train_time = time.time() - train_start_time
         print(f'epoch: {epoch}, training loss: {running_loss}, train time: {train_time}')
 
-        if (epoch+1) % 50 != 0:
+        if (epoch+1) % 30 != 0:
             continue
 
         testing_start_time = time.time()
@@ -161,6 +193,16 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
         all_ndcg_10 = 0
         all_ndcg_20 = 0
         all_ndcg_50 = 0
+
+        recall_score_total_5 = 0.0
+        recall_score_total_10 = 0.0
+        recall_score_total_20 = 0.0
+
+        precision_score_total_5 = 0.0
+        precision_score_total_10 = 0.0
+        precision_score_total_20 = 0.0
+
+        recall_scores = []   
         for i, u_v_p in enumerate(all_pos):
             start = N * i
             end = N * i + N
@@ -176,6 +218,29 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
                 this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item())
+
+            if i%6 == 0:
+                recall_scores = scores
+            else:
+                recall_scores.append(scores[-1])
+            if i%6 == 5:
+                s1 = np.array(recall_scores)
+                sorted_s1 = np.argsort(-s1)
+
+                recall_score_5 = recall_score_fun(sorted_s1[:5])
+                recall_score_10 = recall_score_fun(sorted_s1[:10])
+                recall_score_20 = recall_score_fun(sorted_s1[:20])
+                recall_score_total_5 += recall_score_5
+                recall_score_total_10 += recall_score_10
+                recall_score_total_20 += recall_score_20
+
+                precision_score_5 = precision_score_fun(sorted_s1[:5])
+                precision_score_10 = precision_score_fun(sorted_s1[:10])
+                precision_score_20 = precision_score_fun(sorted_s1[:20])
+                precision_score_total_5 += precision_score_5
+                precision_score_total_10 += precision_score_10
+                precision_score_total_20 += precision_score_20
+
             normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
             pos_id = len(scores) - 1
             s = np.array(scores)
@@ -223,6 +288,28 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
         all_ndcg_20 = all_ndcg_20 / all_pos_num
         all_ndcg_50 = all_ndcg_50 / all_pos_num
 
+        recall_score_avg_5 = recall_score_total_5/user_number
+        recall_score_avg_10 = recall_score_total_10/user_number
+        recall_score_avg_20 = recall_score_total_20/user_number
+
+        precision_score_avg_5 = precision_score_total_5/user_number
+        precision_score_avg_10 = precision_score_total_10/user_number
+        precision_score_avg_20 = precision_score_total_20/user_number
+
+        if best_recall_5 < recall_score_avg_5:
+            best_recall_5 = recall_score_avg_5
+        if best_recall_10 < recall_score_avg_10:
+            best_recall_10 = recall_score_avg_10
+        if best_recall_20 < recall_score_avg_20:
+            best_recall_20 = recall_score_avg_20
+
+        if best_precision_5 < precision_score_avg_5:
+            best_precision_5 = precision_score_avg_5
+        if best_precision_10 < precision_score_avg_10:
+            best_precision_10 = precision_score_avg_10
+        if best_precision_20 < precision_score_avg_20:
+            best_precision_20 = precision_score_avg_20
+
         if best_hit_1 < hit_rate_1:
             best_hit_1 = hit_rate_1
         if best_hit_5 < hit_rate_5:
@@ -245,21 +332,60 @@ def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
             best_ndcg_50 = all_ndcg_50
 
         testing_time = time.time() - testing_start_time
-        print(f"epo:{epoch}|"
+        """print(f"epo:{epoch}|"
               f"HR@1:{hit_rate_1:.4f} | HR@5:{hit_rate_5:.4f} | HR@10:{hit_rate_10:.4f} | HR@20:{hit_rate_20:.4f} | HR@50:{hit_rate_50:.4f} |"
               f" NDCG@1:{all_ndcg_1:.4f} | NDCG@5:{all_ndcg_5:.4f} | NDCG@10:{all_ndcg_10:.4f}| NDCG@20:{all_ndcg_20:.4f}| NDCG@50:{all_ndcg_50:.4f}|"
               f" best_HR@1:{best_hit_1:.4f} | best_HR@5:{best_hit_5:.4f} | best_HR@10:{best_hit_10:.4f} | best_HR@20:{best_hit_20:.4f} | best_HR@50:{best_hit_50:.4f} |"
               f" best_NDCG@1:{best_ndcg_1:.4f} | best_NDCG@5:{best_ndcg_5:.4f} | best_NDCG@10:{best_ndcg_10:.4f} | best_NDCG@20:{best_ndcg_20:.4f} | best_NDCG@50:{best_ndcg_50:.4f} |"
-              f" train_time:{train_time:.2f} | test_time:{testing_time:.2f}")
+              f" train_time:{train_time:.2f} | test_time:{testing_time:.2f}")"""
+        print(f"epo:{epoch} | "
+              f"HR@5:{hit_rate_5:.4f} | "
+              f"HR@10:{hit_rate_10:.4f} | "
+              f"HR@20:{hit_rate_20:.4f} | "
+
+              f"NDCG@5:{all_ndcg_5:.4f} | "
+              f"NDCG@10:{all_ndcg_10:.4f} | "
+              f"NDCG@20:{all_ndcg_20:.4f} | "
+
+              f"recall@5:{recall_score_avg_5:.4f} | "
+              f"recall@10:{recall_score_avg_10:.4f} | "
+              f"recall@20:{recall_score_avg_20:.4f} | "
+
+              f"precision@5:{precision_score_avg_5:.4f} | "
+              f"precision@10:{precision_score_avg_10:.4f} | "
+              f"precision@20:{precision_score_avg_20:.4f} | "
+
+              f"best_HR@5:{best_hit_5:.4f} | "
+              f"best_HR@10:{best_hit_10:.4f} | "
+              f"best_HR@20:{best_hit_20:.4f} | "
+
+              f"best_NDCG@5:{best_ndcg_5:.4f} | "
+              f"best_NDCG@10:{best_ndcg_10:.4f} | "
+              f"best_NDCG@20:{best_ndcg_20:.4f} | "
+
+              f"best_recall@5:{best_recall_5:.4f} | "
+              f"best_recall@10:{best_recall_10:.4f} | "
+              f"best_recall@20:{best_recall_20:.4f} | "
+
+              f"best_precision@5:{best_precision_5:.4f} | "
+              f"best_precision@10:{best_precision_10:.4f} | "
+              f"best_precision@20:{best_precision_20:.4f} | ")
     print('training finish')
 
 
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
     #dataset_name = 'Amazon_Musical_Instruments'
-    dataset_name = 'Amazon_Automotive'
+    #dataset_name = 'Amazon_Automotive'
     #dataset_name = 'Amazon_Toys_Games'
+    dataset_name = 'Amazon_CellPhones_Accessories'
+    #dataset_name = 'Amazon_Grocery_Gourmet_Food'
 
+    print('-'*100)
+    print(f'{dataset_name}......')
+    print('-'*100)
+
+    user_number = 2000
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -281,6 +407,7 @@ if __name__ == '__main__':
 
     # load node embeds
     node_emb_file = folder + 'node_embedding.dic'
+    #node_emb_file = folder + 'nodewv.dic'
     node_emb = load_node_tensor(node_emb_file)
 
     # load ui pairs
@@ -325,8 +452,8 @@ if __name__ == '__main__':
                 get_one_ui = maxpool(max_pooling_input).squeeze(0)
                 this_user_ui_paths_att_emb[(u, i)] = get_one_ui
         ui_paths_att_emb[u] = this_user_ui_paths_att_emb
-    ui_batch_paths_att_emb_pkl_file = folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
-    pickle.dump(ui_paths_att_emb, open(ui_batch_paths_att_emb_pkl_file, 'wb'))
+    #ui_batch_paths_att_emb_pkl_file = folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
+    #pickle.dump(ui_paths_att_emb, open(ui_batch_paths_att_emb_pkl_file, 'wb'))
 
     # 2. item-item instances slf attention
     print('start training item-item instance self attention module...')
@@ -350,14 +477,15 @@ if __name__ == '__main__':
                 this_user_ii_paths_att_emb[(i1, i2)] = torch.from_numpy(this_user_ii_paths_att_emb[(i1, i2)])
 
         ii_paths_att_emb[u] = this_user_ii_paths_att_emb
-    ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
-    pickle.dump(ii_paths_att_emb, open(ii_batch_paths_att_emb_pkl_file, 'wb'))
+    #ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
+    #pickle.dump(ii_paths_att_emb, open(ii_batch_paths_att_emb_pkl_file, 'wb'))
 
     # 3. user and item embedding
-    ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
-    ui_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
-    ii_paths_att_emb = pickle.load(open(ii_batch_paths_att_emb_pkl_file, 'rb'))
-    ui_paths_att_emb = pickle.load(open(ui_batch_paths_att_emb_pkl_file, 'rb'))
+    #ii_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ii_batch_paths_att_emb.pkl'
+    #ui_batch_paths_att_emb_pkl_file =  folder + str(negative_num) + '_ui_batch_paths_att_emb.pkl'
+    #ii_paths_att_emb = pickle.load(open(ii_batch_paths_att_emb_pkl_file, 'rb'))
+    #ui_paths_att_emb = pickle.load(open(ui_batch_paths_att_emb_pkl_file, 'rb'))
+
     print('start updating user and item embedding...')
     start_t_u_i = time.time()
     sequence_concat = []
@@ -393,13 +521,13 @@ if __name__ == '__main__':
             last_item_att = ii_2
         sequence_concat.append(torch.cat([user_sequence_concat[i] for i in range(0, user_n_items - 1)], 0))
     sequence_tensor = torch.stack(sequence_concat)
-    sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
-    pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
+    #sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
+    #pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
 
     # 4. recommendation
     print('start training recommendation module...')
-    sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
-    sequence_tensor = pickle.load(open(sequence_tensor_pkl_name, 'rb'))
+    #sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
+    #sequence_tensor = pickle.load(open(sequence_tensor_pkl_name, 'rb'))
     item_emb = node_emb[user_num:(user_num + item_num), :]
     BATCH_SIZE = 100
 
@@ -415,4 +543,4 @@ if __name__ == '__main__':
         shuffle=False,  #
         num_workers=1,  #
     )
-    rec_net(train_loader, test_loader, node_emb, sequence_tensor)
+    rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor)

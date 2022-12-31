@@ -74,12 +74,20 @@ def instance_emb(metapath_file, output_file):
     pickle.dump(ui_path_vectors, open(output_file, 'wb'))
 
 
-dataset_name = 'Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_CellPhones_Accessories'
+#dataset_name = 'Amazon_Grocery_Gourmet_Food'
+
 
 if __name__ == '__main__':
 #def meta_path_instances_representation(dataset_name):
+    
+    print('-'*100)
+    print(f'{dataset_name}......')
+    print('-'*100)
+    
     folder = f'../data/{dataset_name}/'
 
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']

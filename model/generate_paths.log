@@ -1,0 +1,91 @@
+nohup: ignoring input
+----------------------------------------------------------------------------------------------------
+Amazon_Automotive......
+----------------------------------------------------------------------------------------------------
+51957
+Begin to load data
+/home/ubuntu/model/PaperModel/model/generate_paths.py:73: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  nodewv_tensor = torch.Tensor(nodewv_tensor)
+Load data finished, used time 4.25s
+load pairs finished num =  60000
+uibi
+10000 [3.5616]
+
+20000 [7.1908]
+
+30000 [10.8176]
+
+40000 [14.4063]
+
+50000 [18.0520]
+
+60000 [21.8631]
+
+uibici
+10000 [0.8635]
+
+20000 [1.7340]
+
+30000 [2.5592]
+
+40000 [3.3990]
+
+50000 [4.2294]
+
+60000 [5.0618]
+
+uici
+10000 [4.4885]
+
+20000 [8.9921]
+
+30000 [13.4597]
+
+40000 [17.9808]
+
+50000 [22.4278]
+
+60000 [27.1003]
+
+uicibi
+10000 [0.1486]
+
+20000 [0.3012]
+
+30000 [0.4511]
+
+40000 [0.5908]
+
+50000 [0.7319]
+
+60000 [0.8733]
+
+Begin to load data
+############################
+torch.Size([51957, 100])
+Here are 54507 item-item paths in data.
+Load data finished, used time 4.46s
+['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
+ibibi
+outfile name = ../data/Amazon_Automotive/ibibi.paths
+ibici
+outfile name = ../data/Amazon_Automotive/ibici.paths
+ibiui
+outfile name = ../data/Amazon_Automotive/ibiui.paths
+icibi
+outfile name = ../data/Amazon_Automotive/icibi.paths
+icici
+outfile name = ../data/Amazon_Automotive/icici.paths
+iciui
+outfile name = ../data/Amazon_Automotive/iciui.paths
+iuiui
+outfile name = ../data/Amazon_Automotive/iuiui.paths
+Here are 54507 item-item paths in data.
+0
+3825
+481
+2598
+3936
+36304
+54507
+2.773258034593769

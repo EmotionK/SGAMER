@@ -16,18 +16,26 @@ import pandas as pd
 from collections import defaultdict
 import pickle
 
-dataset_name = 'Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_CellPhones_Accessories'
+#dataset_name = 'Amazon_Grocery_Gourmet_Food'
+
+
 
 if __name__ == '__main__':
 #def user_item_representation(dataset_name):
+    
+    print('-'*100)
+    print(f'{dataset_name}......')
+    print('-'*100)
 
     folder = f'../data/{dataset_name}/'
 
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # device = 'cpu'
+    #device = 'cpu'
     print(f'user_item_representation.py device: {device}')
 
     # Writing our model
