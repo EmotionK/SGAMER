@@ -1,91 +1,112 @@
 nohup: ignoring input
 ----------------------------------------------------------------------------------------------------
-Amazon_Automotive......
+Amazon_Toys_Games......
 ----------------------------------------------------------------------------------------------------
-51957
 Begin to load data
-/home/ubuntu/model/PaperModel/model/generate_paths.py:73: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
-  nodewv_tensor = torch.Tensor(nodewv_tensor)
-Load data finished, used time 4.25s
-load pairs finished num =  60000
+Load data finished, used time 4.02s
+load pairs finished num =  99600
 uibi
-10000 [3.5616]
+10000 [6.2534]
 
-20000 [7.1908]
+20000 [12.4149]
 
-30000 [10.8176]
+30000 [18.5613]
 
-40000 [14.4063]
+40000 [24.7420]
 
-50000 [18.0520]
+50000 [30.8907]
 
-60000 [21.8631]
+60000 [37.0842]
+
+70000 [43.2472]
+
+80000 [49.3972]
+
+90000 [55.5187]
 
 uibici
-10000 [0.8635]
+10000 [1.0752]
 
-20000 [1.7340]
+20000 [2.1413]
 
-30000 [2.5592]
+30000 [3.2093]
 
-40000 [3.3990]
+40000 [4.2742]
 
-50000 [4.2294]
+50000 [5.3488]
 
-60000 [5.0618]
+60000 [6.4258]
+
+70000 [7.4928]
+
+80000 [8.5679]
+
+90000 [9.6510]
 
 uici
-10000 [4.4885]
+10000 [8.2658]
 
-20000 [8.9921]
+20000 [16.5488]
 
-30000 [13.4597]
+30000 [24.8155]
 
-40000 [17.9808]
+40000 [33.1949]
 
-50000 [22.4278]
+50000 [41.5094]
 
-60000 [27.1003]
+60000 [49.8889]
+
+70000 [58.1864]
+
+80000 [66.5667]
+
+90000 [74.9161]
 
 uicibi
-10000 [0.1486]
+10000 [0.1470]
 
-20000 [0.3012]
+20000 [0.2920]
 
-30000 [0.4511]
+30000 [0.4380]
 
-40000 [0.5908]
+40000 [0.5847]
 
-50000 [0.7319]
+50000 [0.7317]
 
-60000 [0.8733]
+60000 [0.8790]
+
+70000 [1.0253]
+
+80000 [1.1732]
+
+90000 [1.3210]
 
 Begin to load data
 ############################
-torch.Size([51957, 100])
-Here are 54507 item-item paths in data.
-Load data finished, used time 4.46s
+torch.Size([72105, 100])
+Here are 90048 item-item paths in data.
+Load data finished, used time 3.88s
 ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
 ibibi
-outfile name = ../data/Amazon_Automotive/ibibi.paths
+outfile name = ../data/Amazon_Toys_Games/ibibi.paths
 ibici
-outfile name = ../data/Amazon_Automotive/ibici.paths
+outfile name = ../data/Amazon_Toys_Games/ibici.paths
 ibiui
-outfile name = ../data/Amazon_Automotive/ibiui.paths
+outfile name = ../data/Amazon_Toys_Games/ibiui.paths
 icibi
-outfile name = ../data/Amazon_Automotive/icibi.paths
+outfile name = ../data/Amazon_Toys_Games/icibi.paths
 icici
-outfile name = ../data/Amazon_Automotive/icici.paths
+outfile name = ../data/Amazon_Toys_Games/icici.paths
 iciui
-outfile name = ../data/Amazon_Automotive/iciui.paths
+outfile name = ../data/Amazon_Toys_Games/iciui.paths
 iuiui
-outfile name = ../data/Amazon_Automotive/iuiui.paths
-Here are 54507 item-item paths in data.
+outfile name = ../data/Amazon_Toys_Games/iuiui.paths
+Here are 90048 item-item paths in data.
 0
-3825
-481
-2598
-3936
-36304
-54507
-2.773258034593769
+4151
+1116
+506
+4042
+15899
+90048
+3.158236481693676

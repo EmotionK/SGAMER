@@ -38,7 +38,7 @@ def parse_args(dataset_name):
 
     parser.add_argument('--graph_name', type=str, default=dataset_name, help='Name of dataset')
 
-    parser.add_argument('--dimensions', type=int, default= 100, help='Number of dimensions. Default is 128.')
+    parser.add_argument('--dimensions', type=int, default= 128, help='Number of dimensions. Default is 128.')
 
     parser.add_argument('--batch_size', type=int, default=128, help='Batch size. Default is 30.')
 
@@ -192,11 +192,13 @@ def main(args):
 if __name__ == "__main__":
 
     #dataset_name = 'Amazon_Musical_Instruments'
-    dataset_name = 'Amazon_Automotive'
+    #dataset_name = 'Amazon_Automotive'
     #dataset_name = 'Amazon_Toys_Games'
     #dataset_name = 'Amazon_CellPhones_Accessories'
     #dataset_name = 'Amazon_Grocery_Gourmet_Food'
-    
+    #dataset_name = 'Amazon_Books'
+    dataset_name = 'Amazon_CDs_Vinyl'
+
     print('-'*100) 
     print(dataset_name)
     print('-'*100)

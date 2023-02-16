@@ -16,11 +16,14 @@ import pickle
 import pandas as pd
 
 #dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-#dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Toys_Games'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+#dataset_name = 'Amazon_Books'
+#dataset_name = 'Amazon_CDs_Vinyl'
 
+embedding_size = 100
 
 if __name__ == '__main__':
 #def item_item_repersentation(dataset_name):
@@ -81,9 +84,10 @@ if __name__ == '__main__':
                     t = (node_list[i], node_list[i + 1])
                 else:
                     t = (node_list[i + 1], node_list[i])
-                path.append(edges_id[t])
+                path.append(str(edges_id[t]))
             edge_path.append(path)
-
+    
+    '''
     with open(folder + 'user_history_edge_path.txt', 'a') as f:
         for path in edge_path:
             for s in path:
@@ -96,9 +100,10 @@ if __name__ == '__main__':
         for line in f:
             walks.append(line.split())
     # print(walks)
+    '''
 
     print("Training...")
-    model = Word2Vec(walks, size=100, window=3, min_count=0, sg=1, hs=1,
+    model = Word2Vec(edge_path, size=embedding_size, window=3, min_count=0, sg=1, hs=1,
                      workers=4)
     # model.wv (item_item) 2200* 100
     model.wv.save_word2vec_format(folder + 'item_item.wv')

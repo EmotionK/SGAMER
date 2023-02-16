@@ -15,14 +15,18 @@ import os
 import pandas as pd
 from collections import defaultdict
 import pickle
+import joblib
 
 #dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-#dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Toys_Games'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+#dataset_name = 'Amazon_Books'
+#dataset_name = 'Amazon_CDs_Vinyl'
 
 
+embedding_size = 100
 
 if __name__ == '__main__':
 #def user_item_representation(dataset_name):
@@ -40,7 +44,7 @@ if __name__ == '__main__':
 
     # Writing our model
     class Autoencoder(nn.Module):
-        def __init__(self, d_in=2000, d_hid=800, d_out=100):
+        def __init__(self, d_in=2000, d_hid=800, d_out=embedding_size):
             super(Autoencoder, self).__init__()
 
             self.encoder = nn.Sequential(
@@ -86,7 +90,7 @@ if __name__ == '__main__':
     for _, row in user_item_relation.iterrows():
         adj[user_id2local_id[row[0]], item_id2local_id[row[1]]] = 1.0
     print(f'adj.shape={adj.shape}')
-    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=100).to(device)
+    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=embedding_size).to(device)
     distance = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs = 10
@@ -105,5 +109,7 @@ if __name__ == '__main__':
     for i, user in enumerate(user_global_id_sequence):
         user_item_representation[user] = embeddings[i, :]
 
-    pickle.dump(user_item_representation, open(folder + 'user_item_dic.wv', 'wb'))
+    #pickle.dump(user_item_representation, open(folder + 'user_item_dic.wv', 'wb'))
+    with open(folder + 'user_item_dic.wv', 'wb') as fo :
+        joblib.dump(user_item_representation,fo)
     print('save done!')

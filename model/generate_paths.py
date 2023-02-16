@@ -44,11 +44,11 @@ class UIPath:
         self.uibici_outfile = ''
         self.uici_outfile = ''
         self.uicibi_outfile = ''
-        self.embeddings = np.zeros((self.usize + self.isize + self.csize + self.bsize, 100))
-        self.user_embedding = np.zeros((self.usize, 100))
-        self.item_embedding = np.zeros((self.isize, 100))
-        self.category_embedding = np.zeros((self.csize, 100))
-        self.brand_embedding = np.zeros((self.bsize, 100))
+        self.embeddings = np.zeros((self.usize + self.isize + self.csize + self.bsize, embedding_size))
+        self.user_embedding = np.zeros((self.usize, embedding_size))
+        self.item_embedding = np.zeros((self.isize, embedding_size))
+        self.category_embedding = np.zeros((self.csize, embedding_size))
+        self.brand_embedding = np.zeros((self.bsize, embedding_size))
         print('Begin to load data')
         start = time.time()
 
@@ -379,7 +379,7 @@ class IIPath:
         self.csize = kargs.get('csize')
         self.bsize = kargs.get('bsize')
 
-        self.embeddings = np.zeros((self.usize+self.isize+self.csize+self.bsize, 100))
+        self.embeddings = np.zeros((self.usize+self.isize+self.csize+self.bsize, embedding_size))
 
         print('Begin to load data')
         start = time.time()
@@ -839,10 +839,10 @@ def form_ii_paths(user_history_file, metapaths_folder, output_filename, metapath
 
 
 def embedding_to_index(folder,dataset_name):
-    embedding = pickle.load(open(f'{folder}/experi_data/node_emb/{dataset_name}_950_100.emb','rb'))['o_embedding']
+    embedding = pickle.load(open(f'{folder}/experi_data/node_emb/{dataset_name}_950_128.emb','rb'))['o_embedding']
     
     nodeId_to_index = pickle.load(open(f'{folder}/{dataset_name}_id_to_index.p','rb'))['out_mapping']
-    trans_metric = pickle.load(open(f'{folder}/experi_data/record/trans_metric_950_100','rb'))
+    trans_metric = pickle.load(open(f'{folder}/experi_data/record/trans_metric_950_128','rb'))
     #print(trans_metric)
     node_to_metapath_metric_x = np.squeeze(trans_metric['metapath_type_metric_x'])
     node_to_metapath_metric_h = np.squeeze(trans_metric['metapath_type_metric_h'])
@@ -865,26 +865,27 @@ def embedding_to_index(folder,dataset_name):
     print(len(node_embedding_dic))
     pickle.dump(node_embedding_dic,open(f'{folder}/node_embedding.dic','wb'))
 
-
-
-user_number = 2000
-choose_dataset = 2
+embedding_size = 100
+choose_dataset = 3
 
 if choose_dataset == 1:
     dataset_name = 'Amazon_Musical_Instruments'    
+    user_number = 1450
     item_number = 9660 #Musical_Instrument
     category_number = 533 #Musical_Instrument
     brand_number = 1953 #Musical_Instrument
 elif choose_dataset == 2:
     dataset_name = 'Amazon_Automotive'
-    item_number = 18525 #Automotive
-    category_number = 1720 #Automotive
-    brand_number = 3965 #Automotive
+    user_number = 4600
+    item_number = 36371 #Automotive
+    category_number = 2036 #Automotive
+    brand_number = 5856 #Automotive
 elif choose_dataset == 3:
     dataset_name = 'Amazon_Toys_Games'
-    item_number = 12836
-    category_number = 1610
-    brand_number = 3404
+    user_number = 8300
+    item_number = 54336
+    category_number = 1474
+    brand_number = 7995
 elif choose_dataset ==4 :
     dataset_name = 'Amazon_CellPhones_Accessories'
     item_number = 16251
@@ -895,7 +896,16 @@ elif choose_dataset == 5:
     item_number = 14283
     category_number = 940
     brand_number = 4775
-
+elif choose_dataset == 6:
+    dataset_name = 'Amazon_Books'
+    item_number = 16858
+    category_number = 426
+    brand_number = 12360
+elif choose_dataset == 7:
+    dataset_name = 'Amazon_CDs_Vinyl'
+    item_number = 19862
+    category_number = 402
+    brand_number = 9785
 
 
 if __name__ == '__main__':
@@ -910,13 +920,13 @@ if __name__ == '__main__':
     ib_relation_file = folder + 'item_brand.relation'
     ui_relation_file = folder + 'user_item.relation'
     user_history_file = folder + 'user_history.txt'
-    node_emb_dic = folder + 'node_embedding.dic'
-    #node_emb_dic = folder + 'nodewv.dic'
+    #node_emb_dic = folder + 'node_embedding.dic'
+    node_emb_dic = folder + 'nodewv.dic'
     ui_metapaths_list = ['uibi', 'uibici', 'uici', 'uicibi']
     ii_metapahts_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     output_filename = folder + 'ii_random_form.paths'
 
-    embedding_to_index(folder,dataset_name)
+    #embedding_to_index(folder,dataset_name)
 
     UIPath(ib_relation_file=ib_relation_file, ic_relation_file=ic_relation_file,
                            ui_relation_file=ui_relation_file,

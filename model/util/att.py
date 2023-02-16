@@ -112,12 +112,17 @@ class ScaledDotProductAttention(nn.Module):
         self.dropout = nn.Dropout(attn_dropout)
         self.softmax = nn.Softmax(dim=2)
 
-    def forward(self, q, k, v):
+    def forward(self, q, k, v,g_t,is_gate):
         attn = torch.bmm(q, k.transpose(1, 2))
         attn = attn / self.temperature
 
         attn = self.softmax(attn)
-        attn = self.dropout(attn)
+        #attn = self.dropout(attn)
+        
+        if is_gate:
+            attn = torch.mul(attn,g_t)
+        
+        attn = self.softmax(attn)
         output = torch.bmm(attn, v)
         return output, attn
 
@@ -140,7 +145,7 @@ class MultiHeadAttention(nn.Module):
         nn.init.xavier_normal_(self.fc.weight)
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, q, k, v):
+    def forward(self, q, k, v,g_t,is_gate):
         d_k, d_v, n_head = self.d_k, self.d_v, self.n_head
         sz_b, len_q, _ = q.size()
         sz_b, len_k, _ = k.size()
@@ -154,7 +159,7 @@ class MultiHeadAttention(nn.Module):
         k = k.permute(2, 0, 1, 3).contiguous().view(-1, len_k, d_k)
         v = v.permute(2, 0, 1, 3).contiguous().view(-1, len_v, d_v)
 
-        output, attn = self.attention(q, k, v)
+        output, attn = self.attention(q, k, v,g_t,is_gate)
         output = output.view(n_head, sz_b, len_q, d_v)
         output = output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1)
         output = self.dropout(self.fc(output))
@@ -169,10 +174,10 @@ class Self_Attention_Network(nn.Module):
             model_dim=user_item_dim, num_heads=num_heads, d_k=d_k, d_v=d_v, dropout=dropout)
         self.feed_forward = nn.Linear(user_item_dim,user_item_dim)
 
-    def forward(self, slf_att_input):
-        slf_att_output, att = self.self_att(q=slf_att_input,k=slf_att_input,v=slf_att_input)
+    def forward(self,slf_att_input,g_t=None,is_gate=False):
+        slf_att_output, att = self.self_att(q=slf_att_input,k=slf_att_input,v=slf_att_input,g_t=g_t,is_gate=is_gate)
         slf_att_output = self.feed_forward(slf_att_output)
-        return slf_att_output
+        return slf_att_output,att
 
 class uiPathAtt(nn.Module):
     def __init__(self, user_item_dim, num_heads=8, d_k=64, d_v=64, dropout=0.1):

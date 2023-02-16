@@ -22,17 +22,22 @@ from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
 #dataset_name='Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Toys_Games'
-dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+#dataset_name = 'Amazon_Books'
+#dataset_name = 'Amazon_CDs_Vinyl'
 
-user_number = 2000
+user_number = 8300
+embedding_size = 100
 #item_number = 9660 #Musical_Instruments
 #item_number = 12836 #Toys_Games
-item_number = 18525 #Automotive
+#item_number = 18525 #Automotive
 #item_number = 16251 #CellPhones_Accessories
 #item_number = 14283 #Grocery_Gourmet_Food
+#item_number = 16858 #Books
+item_number = 58970
 
 
 if __name__ == '__main__':
@@ -46,7 +51,7 @@ if __name__ == '__main__':
     number_walks = 10
     walk_length = 6  # length of path
     workers = 2
-    representation_size = 100
+    representation_size = embedding_size
     window_size = 3
     output = folder + 'node.wv'
     G = pickle.load(open(folder + 'graph.nx', 'rb'))  # node 包括 user/item/brand/category/also_bought
@@ -64,7 +69,7 @@ if __name__ == '__main__':
 
     walk_files = serialized_walks.write_walks_to_disk(G, walks_filebase, num_paths=number_walks,
                                                       path_length=walk_length, num_workers=workers, alpha=0.1,
-                                                      rand=random.Random(100), always_rebuild=True)
+                                                      rand=random.Random(embedding_size), always_rebuild=True)
     walks = serialized_walks.WalksCorpus(walk_files)
 
     print("Training...")

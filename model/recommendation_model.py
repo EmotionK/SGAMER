@@ -16,10 +16,12 @@ from model.util.data_utils import *
 import pickle
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#device = 'cpu'
 print(f'run.py device: {device}')
 
-att_size = 100
-latent_size = 100
+embedding_size = 100
+att_size = embedding_size
+latent_size = embedding_size
 negative_num = 100
 user_n_items = 4 # for each user, it has n items
 
@@ -35,6 +37,7 @@ class Recommendation(nn.Module):
         self.in_features = in_features
         self.attention1 = Attention(self.in_features)
         self.attention2 = Attention(self.in_features)
+        self.dropout = torch.nn.Dropout(p=0.1)
 
         stdv = 1. / math.sqrt(self.weight.size(1))
         self.weight.data.uniform_(-stdv, stdv)
@@ -47,32 +50,67 @@ class Recommendation(nn.Module):
         :param sequence_emb
         :return:
         """
-        x, weights = self.attention1(item_emb, sequence_emb)
+        x, weights = self.attention1(item_emb, sequence_emb) 
+        #output = self.dropout(x)
         output = F.linear(x, self.weight, self.bias)
+        #output = self.dropout(output)
         a, b, c = output.shape
         output = output.reshape((a, c))
         fe = F.log_softmax(output)
         return fe
 
+class AuxiliaryNet(torch.nn.Module):
+    def __init__(self,dim):
+        super(AuxiliaryNet, self).__init__()
+        self.att = Self_Attention_Network(user_item_dim=embedding_size,num_heads=1).to(device)
+        self.aux_linear = nn.Linear(embedding_size,1)
+        self.sigmoid = torch.nn.Sigmoid()
+
+    def forward(self,input_tensor,is_train=True):
+        out,weight = self.att(slf_att_input=input_tensor)
+        out_linear = self.aux_linear(out)
+        p_t = self.sigmoid(out_linear)
+
+        if is_train:
+            p_t = p_t.repeat(1, 1, 2)
+            p_t[:, :, 0] = 1 - p_t[:, :, 0]
+            g_hat = F.gumbel_softmax(p_t, 1, hard=False)
+            g_t = g_hat[:, :, 1]
+
+        else:
+            # size : same as p_t [ batch_size x seq_len x 1]
+            m = torch.distributions.bernoulli.Bernoulli(p_t)
+            g_t = m.sample()
+
+        one = torch.ones_like(g_t)
+        zero = torch.zeros_like(g_t)
+        g_t = torch.where(g_t>0.7,one,zero)
+
+        return g_t
+
 class GRU(nn.Module):
-    def __init__(self, user_item_dim):
+    def __init__(self, user_item_dim,input_tensor):
         super(GRU, self).__init__()
+        self.auxiliary = AuxiliaryNet(input_tensor.shape[1]).to(device)
         self.instances_slf_att = Self_Attention_Network(user_item_dim=user_item_dim).to(device)
-        self.instances_gru = torch.nn.GRU(input_size=100,hidden_size=100,num_layers=1,batch_first=True).to(device)
-      
+        self.instances_gru = torch.nn.GRU(input_size=user_item_dim,hidden_size=user_item_dim,num_layers=1,batch_first=True).to(device)
+       
     def forward(self,input_tensor):
+        g_t = self.auxiliary(input_tensor.to(device))
+        
         r_out, h_state = self.instances_gru(input_tensor.to(device))
-        out = self.instances_slf_att(r_out.to(device))
-        return out
+        #out,weight = self.instances_slf_att(r_out.to(device))
+        out,weight = self.instances_slf_att(r_out.to(device),g_t,is_gate=True)
+        return out,weight
 
 def instances_slf_att(input_tensor):
     #instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
-    instances_slf_att = GRU(user_item_dim=latent_size)
+    instances_slf_att = GRU(user_item_dim=latent_size,input_tensor=input_tensor).to(device)
     distance_slf_att = nn.MSELoss()
     optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs_slf_att = 50
     for epoch in range(num_epochs_slf_att):
-        output = instances_slf_att(input_tensor.to(device))
+        output,att = instances_slf_att(input_tensor.to(device))
         loss_slf = distance_slf_att(output.to(device), input_tensor.to(device)).to(device)
         optimizer_slf_att.zero_grad()
         loss_slf.backward()
@@ -91,7 +129,7 @@ def item_attention(item_input, ii_path):
     :param this_item_input:
     :return: item att output
     """
-    item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=100).to(device)
+    item_atten = ItemAttention(latent_dim=ii_path.shape[-1], att_size=embedding_size).to(device)
     distance_att = nn.MSELoss()
     optimizer_att = torch.optim.Adam(item_atten.parameters(), lr=0.01, weight_decay=0.00005)
     num_epoch = 10
@@ -160,19 +198,19 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
                 user_neg[user] = []
                 user_neg[user].append(item)
             all_neg.append((index, user, item))
-    recommendation = Recommendation(100).to(device)
-    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.003)
+    recommendation = Recommendation(embedding_size).to(device)
+    optimizer = torch.optim.Adam(recommendation.parameters(), lr=0.001)
     for epoch in range(150):
         train_start_time = time.time()
         running_loss = 0.0
         for step, batch in enumerate(train_loader):
-            batch_item_emb = node_emb[batch[:, 1]].reshape((batch.shape[0], 1, 100)).to(device)
+            batch_item_emb = node_emb[batch[:, 1]].reshape((batch.shape[0], 1, embedding_size)).to(device)
             batch_labels = batch[:, 2].to(device)
-            batch_sequence_tensor = sequence_tensor[batch[:,0]].reshape((batch.shape[0], 9, 100)).to(device)
+            batch_sequence_tensor = sequence_tensor[batch[:,0]].reshape((batch.shape[0], 9, embedding_size)).to(device)
             optimizer.zero_grad()
             prediction = recommendation(batch_item_emb, batch_sequence_tensor).to(device)
             loss_train = torch.nn.functional.cross_entropy(prediction, batch_labels).to(device)
-            loss_train.backward()
+            loss_train.backward(retain_graph=True)
             optimizer.step()
             running_loss += loss_train.item()
         train_time = time.time() - train_start_time
@@ -213,9 +251,9 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
             scores = []
             for index, userid, itemid in p_and_n_seq:
                 # calculate score of user and item
-                user_emb = node_emb[userid].reshape((1, 1, 100)).to(device)
-                this_item_emb = node_emb[itemid].reshape((1, 1, 100)).to(device)
-                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, 100)).to(device)
+                user_emb = node_emb[userid].reshape((1, 1, embedding_size)).to(device)
+                this_item_emb = node_emb[itemid].reshape((1, 1, embedding_size)).to(device)
+                this_sequence_tensor = sequence_tensor[userid].reshape((1, 9, embedding_size)).to(device)
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item())
 
@@ -376,16 +414,18 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
     #dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
+    dataset_name = 'Amazon_Automotive'
     #dataset_name = 'Amazon_Toys_Games'
-    dataset_name = 'Amazon_CellPhones_Accessories'
+    #dataset_name = 'Amazon_CellPhones_Accessories'
     #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+    #dataset_name = 'Amazon_Books'
+    #dataset_name = 'Amazon_CDs_Vinyl'
 
     print('-'*100)
     print(f'{dataset_name}......')
     print('-'*100)
 
-    user_number = 2000
+    user_number = 4600
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -406,8 +446,8 @@ if __name__ == '__main__':
     item_num = len(items_list)
 
     # load node embeds
-    node_emb_file = folder + 'node_embedding.dic'
-    #node_emb_file = folder + 'nodewv.dic'
+    #node_emb_file = folder + 'node_embedding.dic'
+    node_emb_file = folder + 'nodewv.dic'
     node_emb = load_node_tensor(node_emb_file)
 
     # load ui pairs
@@ -529,7 +569,7 @@ if __name__ == '__main__':
     #sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
     #sequence_tensor = pickle.load(open(sequence_tensor_pkl_name, 'rb'))
     item_emb = node_emb[user_num:(user_num + item_num), :]
-    BATCH_SIZE = 100
+    BATCH_SIZE = 128
 
     train_loader = Data.DataLoader(
         dataset=train_data,  # torch TensorDataset format

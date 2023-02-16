@@ -26,8 +26,10 @@ ui_path_vectors:{
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
+embedding_size = 100
+
 class Autoencoder(nn.Module):
-    def __init__(self, d_in=2000, d_hid=800, d_out=100):
+    def __init__(self, d_in=2000, d_hid=800, d_out=embedding_size):
         super(Autoencoder, self).__init__()
         self.encoder = nn.Sequential(
             nn.Linear(d_in, d_hid),
@@ -54,7 +56,7 @@ def instance_emb(metapath_file, output_file):
     path_dict = instance_paths_to_dict(metapath_file) #{(95, 6611): [['95', '10553', '11619', '6611'], ['95', '10553', '11619', '6611']], (95, 3241): [['95', '10553', '11619', '3241']],...}
 
     print("Training...")
-    model = Word2Vec(walks, size=100, window=3, min_count=0, sg=1, hs=1,
+    model = Word2Vec(walks, size=embedding_size, window=3, min_count=0, sg=1, hs=1,
                      workers=1)
 
     # mean pooling
@@ -75,10 +77,12 @@ def instance_emb(metapath_file, output_file):
 
 
 #dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
-#dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Toys_Games'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
+#dataset_name = 'Amazon_Books'
+#dataset_name = 'Amazon_CDs_Vinyl'
 
 
 if __name__ == '__main__':
