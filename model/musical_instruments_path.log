@@ -1,0 +1,59 @@
+nohup: ignoring input
+----------------------------------------------------------------------------------------------------
+Amazon_Musical_Instruments......
+----------------------------------------------------------------------------------------------------
+Begin to load data
+Load data finished, used time 1.22s
+load pairs finished num =  17400
+uibi
+10000 [9.0337]
+
+uibici
+10000 [0.6958]
+
+uici
+10000 [13.1318]
+
+uicibi
+10000 [0.2249]
+
+uibi_number=7789
+uici_number=82723
+uibici_number=7101
+uicibi_number=254
+Begin to load data
+############################
+torch.Size([13596, 100])
+Here are 15466 item-item paths in data.
+Load data finished, used time 1.14s
+['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
+ibibi
+outfile name = ../data/Amazon_Musical_Instruments/ibibi.paths
+ibici
+outfile name = ../data/Amazon_Musical_Instruments/ibici.paths
+ibiui
+outfile name = ../data/Amazon_Musical_Instruments/ibiui.paths
+icibi
+outfile name = ../data/Amazon_Musical_Instruments/icibi.paths
+icici
+outfile name = ../data/Amazon_Musical_Instruments/icici.paths
+iciui
+outfile name = ../data/Amazon_Musical_Instruments/iciui.paths
+iuiui
+outfile name = ../data/Amazon_Musical_Instruments/iuiui.paths
+icibi_number=2265
+ibici_number=7659
+icici_number=2266
+ibibi_number=0
+iuiui_number=631795
+iciui_number=86282
+ibiui_number=641
+Here are 15466 item-item paths in data.
+0
+1283
+273
+624
+1713
+10611
+15466
+0.8176460959240465

@@ -1,0 +1,139 @@
+nohup: ignoring input
+----------------------------------------------------------------------------------------------------
+Amazon_Toys_Games......
+----------------------------------------------------------------------------------------------------
+Begin to load data
+Load data finished, used time 7.87s
+load pairs finished num =  111600
+uibi
+10000 [10.1390]
+
+20000 [18.5419]
+
+30000 [27.8869]
+
+40000 [36.9664]
+
+50000 [45.5204]
+
+60000 [55.4002]
+
+70000 [65.1960]
+
+80000 [75.9090]
+
+90000 [87.6106]
+
+100000 [98.8550]
+
+110000 [107.9540]
+
+uibici
+10000 [4.1141]
+
+20000 [8.5204]
+
+30000 [12.7541]
+
+40000 [17.5208]
+
+50000 [22.2286]
+
+60000 [26.8882]
+
+70000 [31.7387]
+
+80000 [36.5299]
+
+90000 [41.3114]
+
+100000 [46.4486]
+
+110000 [51.6981]
+
+uici
+10000 [14.5079]
+
+20000 [27.2627]
+
+30000 [40.2059]
+
+40000 [53.1317]
+
+50000 [66.5743]
+
+60000 [79.5550]
+
+70000 [93.2911]
+
+80000 [106.5856]
+
+90000 [120.2566]
+
+100000 [134.3305]
+
+110000 [147.6551]
+
+uicibi
+10000 [0.3163]
+
+20000 [0.6305]
+
+30000 [0.9705]
+
+40000 [1.3192]
+
+50000 [1.6363]
+
+60000 [2.0096]
+
+70000 [2.3902]
+
+80000 [2.7584]
+
+90000 [3.1244]
+
+100000 [3.5048]
+
+110000 [3.8744]
+
+uibi_number=118777
+uici_number=490719
+uibici_number=48913
+uicibi_number=2988
+Begin to load data
+############################
+torch.Size([78381, 100])
+Here are 100826 item-item paths in data.
+Load data finished, used time 6.28s
+['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
+ibibi
+outfile name = ../data/Amazon_Toys_Games/ibibi.paths
+ibici
+outfile name = ../data/Amazon_Toys_Games/ibici.paths
+ibiui
+outfile name = ../data/Amazon_Toys_Games/ibiui.paths
+icibi
+outfile name = ../data/Amazon_Toys_Games/icibi.paths
+icici
+outfile name = ../data/Amazon_Toys_Games/icici.paths
+iciui
+outfile name = ../data/Amazon_Toys_Games/iciui.paths
+iuiui
+outfile name = ../data/Amazon_Toys_Games/iuiui.paths
+icibi_number=3734
+ibici_number=20869
+icici_number=605
+ibibi_number=0
+iuiui_number=2301592
+iciui_number=40217
+ibiui_number=2962
+Here are 100826 item-item paths in data.
+0
+4477
+1176
+560
+2664
+18959
+100826
+3.510176242702024

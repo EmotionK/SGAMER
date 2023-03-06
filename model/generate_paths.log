@@ -3,89 +3,17 @@ nohup: ignoring input
 Amazon_Toys_Games......
 ----------------------------------------------------------------------------------------------------
 Begin to load data
-Load data finished, used time 4.02s
-load pairs finished num =  99600
+Load data finished, used time 4.46s
+load pairs finished num =  3600
 uibi
-10000 [6.2534]
-
-20000 [12.4149]
-
-30000 [18.5613]
-
-40000 [24.7420]
-
-50000 [30.8907]
-
-60000 [37.0842]
-
-70000 [43.2472]
-
-80000 [49.3972]
-
-90000 [55.5187]
-
 uibici
-10000 [1.0752]
-
-20000 [2.1413]
-
-30000 [3.2093]
-
-40000 [4.2742]
-
-50000 [5.3488]
-
-60000 [6.4258]
-
-70000 [7.4928]
-
-80000 [8.5679]
-
-90000 [9.6510]
-
 uici
-10000 [8.2658]
-
-20000 [16.5488]
-
-30000 [24.8155]
-
-40000 [33.1949]
-
-50000 [41.5094]
-
-60000 [49.8889]
-
-70000 [58.1864]
-
-80000 [66.5667]
-
-90000 [74.9161]
-
 uicibi
-10000 [0.1470]
-
-20000 [0.2920]
-
-30000 [0.4380]
-
-40000 [0.5847]
-
-50000 [0.7317]
-
-60000 [0.8790]
-
-70000 [1.0253]
-
-80000 [1.1732]
-
-90000 [1.3210]
-
 Begin to load data
 ############################
-torch.Size([72105, 100])
-Here are 90048 item-item paths in data.
-Load data finished, used time 3.88s
+torch.Size([78381, 100])
+Here are 100826 item-item paths in data.
+Load data finished, used time 4.38s
 ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
 ibibi
 outfile name = ../data/Amazon_Toys_Games/ibibi.paths
@@ -101,12 +29,12 @@ iciui
 outfile name = ../data/Amazon_Toys_Games/iciui.paths
 iuiui
 outfile name = ../data/Amazon_Toys_Games/iuiui.paths
-Here are 90048 item-item paths in data.
+Here are 100826 item-item paths in data.
 0
-4151
-1116
-506
-4042
-15899
-90048
-3.158236481693676
+4477
+1176
+560
+2664
+18959
+100826
+3.510176242702024

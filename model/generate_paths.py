@@ -44,6 +44,12 @@ class UIPath:
         self.uibici_outfile = ''
         self.uici_outfile = ''
         self.uicibi_outfile = ''
+
+        self.uibi_number = 0
+        self.uibici_number = 0
+        self.uici_number = 0
+        self.uicibi_number = 0
+
         self.embeddings = np.zeros((self.usize + self.isize + self.csize + self.bsize, embedding_size))
         self.user_embedding = np.zeros((self.usize, embedding_size))
         self.item_embedding = np.zeros((self.isize, embedding_size))
@@ -150,6 +156,10 @@ class UIPath:
                 self.uici_outfile.close()
             if metapath == 'uicibi':
                 self.uicibi_outfile.close()
+        print(f'uibi_number={self.uibi_number}')
+        print(f'uici_number={self.uici_number}')
+        print(f'uibici_number={self.uibici_number}')
+        print(f'uicibi_number={self.uicibi_number}')
 
     def get_sim(self, u, v):
         return u.dot(v) / ((u.dot(u) ** 0.5) * (v.dot(v) ** 0.5))
@@ -185,6 +195,7 @@ class UIPath:
             return
         self.uici_outfile.write(str(s_u) + ',' + str(e_i) + '\t' + str(len(ic_list)))
         for ic in ic_list:
+            self.uici_number += 1
             path = [str(s_u), str(ic[0]), str(ic[1]), str(e_i)]
             self.uici_outfile.write('\t' + ' '.join(path))
         self.uici_outfile.write('\n')
@@ -221,6 +232,7 @@ class UIPath:
             return
         self.uibi_outfile.write(str(s_u) + ',' + str(e_i) + '\t' + str(len(ib_list)))
         for ib in ib_list:
+            self.uibi_number += 1
             path = [str(s_u), str(ib[0]), str(ib[1]), str(e_i)]
             self.uibi_outfile.write('\t' + ' '.join(path))
         self.uibi_outfile.write('\n')
@@ -266,6 +278,7 @@ class UIPath:
         write_path = str(start) + ',' + str(end) + '\t' + '1' + '\t' + ' '.join(path)
         self.uicibi_outfile.write(write_path)
         self.uicibi_outfile.write('\n')
+        self.uicibi_number += 1
         return ' '.join(path)
 
     def walk_uibici(self, start, end):
@@ -310,6 +323,7 @@ class UIPath:
         write_path = str(start) + ',' + str(end) + '\t' + '1' + '\t' + ' '.join(path)
         self.uibici_outfile.write(write_path)
         self.uibici_outfile.write('\n')
+        self.uibici_number += 1
         return ' '.join(path)
 
 
@@ -378,6 +392,14 @@ class IIPath:
         self.isize = kargs.get('isize')
         self.csize = kargs.get('csize')
         self.bsize = kargs.get('bsize')
+        
+        self.icibi_number = 0
+        self.ibici_number = 0
+        self.icici_number = 0
+        self.ibibi_number = 0
+        self.iuiui_number = 0
+        self.iciui_number = 0
+        self.ibiui_number = 0
 
         self.embeddings = np.zeros((self.usize+self.isize+self.csize+self.bsize, embedding_size))
 
@@ -508,6 +530,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.icibi_number += 1
                                 path = str(i) + ' ' + str(c) + ' ' + str(i2) + ' ' + str(b) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -543,6 +566,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.ibici_number += 1
                                 path = str(i) + ' ' + str(b) + ' ' + str(i2) + ' ' + str(c) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -596,6 +620,7 @@ class IIPath:
 
                         for i3 in i_list3:
                             if self.ifInIIpairs(i, i3):
+                                self.icici_number += 1
                                 path = str(i) + ' ' + str(c1) + ' ' + str(i2) + ' ' + str(c2) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -639,6 +664,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.ibibi_number += 1
                                 path = str(i) + ' ' + str(b1) + ' ' + str(i2) + ' ' + str(b2) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -670,6 +696,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.iuiui_number += 1
                                 path = str(i) + ' ' + str(u1) + ' ' + str(i2) + ' ' + str(u2) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -701,6 +728,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.iciui_number += 1
                                 path = str(i) + ' ' + str(c1) + ' ' + str(i2) + ' ' + str(u) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -732,6 +760,7 @@ class IIPath:
                             continue
                         for i3 in i3_list:
                             if self.ifInIIpairs(i, i3):
+                                self.ibiui_number += 1
                                 path = str(i) + ' ' + str(b) + ' ' + str(i2) + ' ' + str(u) + ' ' + str(i3)
                                 path_id = str(i) + ',' + str(i3)
                                 write_content = path_id + '\t' + path + '\n'
@@ -768,6 +797,13 @@ class IIPath:
                 self.save_ibiui(all_item_ids, start_time, outfile)
 
             outfile.close()
+        print(f'icibi_number={self.icibi_number}')
+        print(f'ibici_number={self.ibici_number}')
+        print(f'icici_number={self.icici_number}')
+        print(f'ibibi_number={self.ibibi_number}')
+        print(f'iuiui_number={self.iuiui_number}')
+        print(f'iciui_number={self.iciui_number}')
+        print(f'ibiui_number={self.ibiui_number}')
 
 def load_all_ii_direct(user_history_f):
     all_ii_direct = set()
@@ -882,10 +918,10 @@ elif choose_dataset == 2:
     brand_number = 5856 #Automotive
 elif choose_dataset == 3:
     dataset_name = 'Amazon_Toys_Games'
-    user_number = 8300
-    item_number = 54336
-    category_number = 1474
-    brand_number = 7995
+    user_number = 9300
+    item_number = 58970
+    category_number = 1574
+    brand_number = 8537
 elif choose_dataset ==4 :
     dataset_name = 'Amazon_CellPhones_Accessories'
     item_number = 16251
@@ -906,6 +942,12 @@ elif choose_dataset == 7:
     item_number = 19862
     category_number = 402
     brand_number = 9785
+elif choose_dataset == 8:
+    dataset_name = 'Amazon_Musical_Instruments_simple'
+    user_number = 10
+    item_number = 120
+    category_number = 108
+    brand_number = 73
 
 
 if __name__ == '__main__':

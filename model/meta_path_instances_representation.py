@@ -78,7 +78,8 @@ def instance_emb(metapath_file, output_file):
 
 #dataset_name = 'Amazon_Musical_Instruments'
 #dataset_name = 'Amazon_Automotive'
-dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Toys_Games'
+dataset_name = 'Amazon_Musical_Instruments_simple'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
 #dataset_name = 'Amazon_Books'

@@ -84,28 +84,45 @@ class AuxiliaryNet(torch.nn.Module):
 
         one = torch.ones_like(g_t)
         zero = torch.zeros_like(g_t)
-        g_t = torch.where(g_t>0.3,one,zero)
+        g_t = torch.where(g_t>0.2,one,zero)
 
         return g_t
 
 class GRU(nn.Module):
-    def __init__(self, user_item_dim,input_tensor):
+    def __init__(self, user_item_dim, input_tensor):
         super(GRU, self).__init__()
+
         self.auxiliary = AuxiliaryNet(input_tensor.shape[1]).to(device)
         self.instances_slf_att = Self_Attention_Network(user_item_dim=user_item_dim).to(device)
-        self.instances_gru = torch.nn.GRU(input_size=user_item_dim,hidden_size=user_item_dim,num_layers=1,batch_first=True).to(device)
-       
-    def forward(self,input_tensor):
-        g_t = self.auxiliary(input_tensor.to(device))
         
-        r_out, h_state = self.instances_gru(input_tensor.to(device))
-        #out,weight = self.instances_slf_att(r_out.to(device))
-        out,weight = self.instances_slf_att(r_out.to(device),g_t,is_gate=True)
-        return out,weight
+        self.instances_gru = torch.nn.GRU(input_size=100, hidden_size=100, num_layers=1, batch_first=True).to(device)
+
+    def forward(self, input_tensor):
+        
+        out, h_state = self.instances_gru(input_tensor.to(device))
+        
+        g_t = self.auxiliary(input_tensor.to(device))
+        out, weight = self.instances_slf_att(out.to(device), g_t, is_gate=True)
+        
+        return out
+
+def item_sequence_attention(input_tensor):
+    instances_slf_att = GRU(user_item_dim=latent_size, input_tensor=input_tensor).to(device)
+    distance_slf_att = nn.MSELoss()
+    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
+    num_epochs_slf_att = 50
+    for epoch in range(num_epochs_slf_att):
+        output = instances_slf_att(input_tensor.to(device))
+        loss_slf = distance_slf_att(output.to(device), input_tensor.to(device)).to(device)
+        optimizer_slf_att.zero_grad()
+        loss_slf.backward()
+        optimizer_slf_att.step()
+    slf_att_embeddings = output.detach().cpu().numpy()
+    torch.cuda.empty_cache()
+    return slf_att_embeddings
 
 def instances_slf_att(input_tensor):
-    #instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
-    instances_slf_att = GRU(user_item_dim=latent_size,input_tensor=input_tensor).to(device)
+    instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
     distance_slf_att = nn.MSELoss()
     optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs_slf_att = 50
@@ -415,8 +432,7 @@ if __name__ == '__main__':
 #def recommendation_model(dataset_name):
     #dataset_name = 'Amazon_Musical_Instruments'
     #dataset_name = 'Amazon_Automotive'
-    #dataset_name = 'Amazon_Toys_Games'
-    dataset_name = 'Amazon_Musical_Instruments_simple'
+    dataset_name = 'Amazon_Toys_Games'
     #dataset_name = 'Amazon_CellPhones_Accessories'
     #dataset_name = 'Amazon_Grocery_Gourmet_Food'
     #dataset_name = 'Amazon_Books'
@@ -426,7 +442,7 @@ if __name__ == '__main__':
     print(f'{dataset_name}......')
     print('-'*100)
 
-    user_number = 10
+    user_number = 9300
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -459,8 +475,9 @@ if __name__ == '__main__':
     ii_metapaths_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     
     user_item_direct_emb_file = folder + 'user_item_dic.wv'
-    user_item_direct_emb = pickle.load(open(user_item_direct_emb_file,'rb'))
-    
+    #user_item_direct_emb = pickle.load(open(user_item_direct_emb_file,'rb'))
+    user_item_direct_emb = torch.load(user_item_direct_emb_file)
+
     item_item_direct_emb_file = folder + 'item_item.wv'
     item_item_direct_emb = load_item_item_wv(item_item_direct_emb_file)
     
@@ -541,11 +558,25 @@ if __name__ == '__main__':
         user_sequence_concat = defaultdict()
         this_user_ui_paths_dic = ui_paths_att_emb[u]
         this_user_ii_paths_dic = ii_paths_att_emb[u]
+        
+        
+        # gru和门控网络
+        user_item_sequence = []
+        for item_id in ui_dict[u]:
+            user_item_sequence.append(node_emb[item_id])
+        user_item_sequence = torch.Tensor([item.numpy() for item in user_item_sequence]) # user_item_sequence=torch.Size([12, 100])
+        user_item_sequence = user_item_sequence.unsqueeze(0)
+        output = item_sequence_attention(user_item_sequence).squeeze() 
+        
+        
         # for user uid, item1
         u_emb = node_emb[u].reshape((1, -1)).to(device)
         i1_id = ui_dict[u][0]
         u_i1_emb = this_user_ui_paths_dic[(u, i1_id)].reshape((1, -1)).to(device)
-        item1_emb = node_emb[i1_id].reshape((1, -1))
+        
+        #item1_emb = node_emb[i1_id].reshape((1, -1))
+        item1_emb = torch.Tensor(output[0].reshape((1, -1)))
+        
         # input: u_i1_emb, item1_emb   after attention: the same dimension
         item1_att = item_attention(item1_emb, u_i1_emb.unsqueeze(0)).reshape((1, -1))
         item1_att = torch.from_numpy(item1_att).to(device)
@@ -559,7 +590,10 @@ if __name__ == '__main__':
             item_att_input = this_user_ii_paths_dic[(i1, i2)].unsqueeze(0)
             ii_1 = item_attention(last_item_att, item_att_input).reshape((1, -1))
             ii_1 = torch.from_numpy(ii_1).to(device)
-            ii_2 = item_attention(node_emb[i2].unsqueeze(0), item_att_input).reshape((1, -1))
+            
+            #ii_2 = item_attention(node_emb[i2].unsqueeze(0), item_att_input).reshape((1, -1))
+            ii_2 = item_attention(torch.Tensor(output[i_index].reshape((1, -1))), item_att_input).reshape((1, -1))
+
             ii_2 = torch.from_numpy(ii_2).to(device)
             user_sequence_concat[i_index] = torch.cat([u_emb, ii_1, ii_2], dim=0)
             last_item_att = ii_2

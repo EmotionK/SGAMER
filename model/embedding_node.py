@@ -22,22 +22,24 @@ from collections import defaultdict
 from model.util import simple_walks as serialized_walks
 
 #dataset_name='Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Toys_Games'
+#dataset_name = 'Amazon_Toys_Games'
 #dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Musical_Instruments_simple'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
 #dataset_name = 'Amazon_Books'
 #dataset_name = 'Amazon_CDs_Vinyl'
 
-user_number = 8300
+user_number = 10
 embedding_size = 100
 #item_number = 9660 #Musical_Instruments
-#item_number = 12836 #Toys_Games
-#item_number = 18525 #Automotive
+#item_number = 58970 #Toys_Games
+#item_number = 36371 #Automotive
+item_number = 120
 #item_number = 16251 #CellPhones_Accessories
 #item_number = 14283 #Grocery_Gourmet_Food
 #item_number = 16858 #Books
-item_number = 58970
+#item_number = 58970
 
 
 if __name__ == '__main__':

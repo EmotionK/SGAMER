@@ -1,23 +1,374 @@
 nohup: ignoring input
-run.py device: cpu
+run.py device: cuda
 ----------------------------------------------------------------------------------------------------
 Amazon_Toys_Games......
 ----------------------------------------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/ubuntu/model/PaperModel/model/recommendation_model.py", line 460, in <module>
-    user_item_direct_emb = pickle.load(open(user_item_direct_emb_file, 'rb'))
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/storage.py", line 141, in _load_from_bytes
-    return torch.load(io.BytesIO(b))
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/serialization.py", line 595, in load
-    return _legacy_load(opened_file, map_location, pickle_module, **pickle_load_args)
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/serialization.py", line 774, in _legacy_load
-    result = unpickler.load()
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/serialization.py", line 730, in persistent_load
-    deserialized_objects[root_key] = restore_location(obj, location)
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/serialization.py", line 175, in default_restore_location
-    result = fn(storage, location)
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/serialization.py", line 155, in _cuda_deserialize
-    return storage_type(obj.size())
-  File "/home/ubuntu/miniconda3/envs/PaperModel/lib/python3.9/site-packages/torch/cuda/__init__.py", line 462, in _lazy_new
-    return super(_CudaBase, cls).__new__(cls, *args, **kwargs)
-RuntimeError: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 14.61 GiB total capacity; 12.89 GiB already allocated; 17.12 MiB free; 13.57 GiB reserved in total by PyTorch)
+labels.shape: torch.Size([3757200])
+loading node embedding, all user-item and item-item paths embedding...finished
+start training user-item instance self attention module...
+user  0 time:  4.76837158203125e-06
+user  100 time:  229.92813229560852
+user  200 time:  460.24447679519653
+user  300 time:  722.3563606739044
+user  400 time:  722.3603458404541
+user  500 time:  722.3659400939941
+user  600 time:  722.3699555397034
+user  700 time:  722.3738763332367
+user  800 time:  722.3773031234741
+user  900 time:  722.3808634281158
+user  1000 time:  722.3848321437836
+user  1100 time:  722.3891167640686
+user  1200 time:  722.3930289745331
+user  1300 time:  722.3968937397003
+user  1400 time:  722.4009003639221
+user  1500 time:  722.4047615528107
+user  1600 time:  722.4078159332275
+user  1700 time:  722.4111309051514
+user  1800 time:  722.4147918224335
+user  1900 time:  722.4186296463013
+user  2000 time:  722.4225611686707
+user  2100 time:  722.4265122413635
+user  2200 time:  722.4304444789886
+user  2300 time:  722.4343159198761
+user  2400 time:  722.4384489059448
+user  2500 time:  722.4423923492432
+user  2600 time:  722.4462683200836
+user  2700 time:  722.4501588344574
+user  2800 time:  722.4541549682617
+user  2900 time:  722.4580490589142
+user  3000 time:  722.4623055458069
+user  3100 time:  722.4661858081818
+user  3200 time:  722.4697334766388
+user  3300 time:  722.4730069637299
+user  3400 time:  722.4768645763397
+user  3500 time:  722.4807507991791
+user  3600 time:  722.4846651554108
+user  3700 time:  722.4889466762543
+user  3800 time:  722.4927453994751
+user  3900 time:  722.4961214065552
+user  4000 time:  722.499591588974
+user  4100 time:  722.5034878253937
+user  4200 time:  722.5073707103729
+user  4300 time:  722.5117285251617
+user  4400 time:  722.5155863761902
+user  4500 time:  722.5194628238678
+user  4600 time:  722.5231854915619
+user  4700 time:  722.5267488956451
+user  4800 time:  722.530189037323
+user  4900 time:  722.5341131687164
+user  5000 time:  722.538378238678
+user  5100 time:  722.5423202514648
+user  5200 time:  722.5462055206299
+user  5300 time:  722.5500283241272
+user  5400 time:  722.5537345409393
+user  5500 time:  722.556939125061
+user  5600 time:  722.5613331794739
+user  5700 time:  722.5651857852936
+user  5800 time:  722.5691823959351
+user  5900 time:  722.5731317996979
+user  6000 time:  722.5769634246826
+user  6100 time:  722.5807991027832
+user  6200 time:  722.5845167636871
+user  6300 time:  722.5885424613953
+user  6400 time:  722.5923004150391
+user  6500 time:  722.5961170196533
+user  6600 time:  722.6000740528107
+user  6700 time:  722.6038820743561
+user  6800 time:  722.6077716350555
+user  6900 time:  722.6119730472565
+user  7000 time:  722.6154124736786
+user  7100 time:  722.6190869808197
+user  7200 time:  722.6220278739929
+user  7300 time:  722.6256198883057
+user  7400 time:  722.6282527446747
+user  7500 time:  722.631019115448
+user  7600 time:  722.6353001594543
+user  7700 time:  722.6382210254669
+user  7800 time:  722.6411943435669
+user  7900 time:  722.6442413330078
+user  8000 time:  722.6478760242462
+user  8100 time:  722.6512749195099
+user  8200 time:  722.6545112133026
+user  8300 time:  722.6571714878082
+user  8400 time:  722.6600728034973
+user  8500 time:  722.6632945537567
+user  8600 time:  722.666127204895
+user  8700 time:  722.6687850952148
+user  8800 time:  722.6717500686646
+user  8900 time:  722.6743531227112
+user  9000 time:  722.6780302524567
+user  9100 time:  722.6819758415222
+user  9200 time:  722.6858417987823
+start training item-item instance self attention module...
+user  0 time:  4.5299530029296875e-06
+user  100 time:  91.03605794906616
+user  200 time:  154.70935368537903
+user  300 time:  222.7822699546814
+user  400 time:  301.2946991920471
+user  500 time:  370.61960077285767
+user  600 time:  439.3988199234009
+user  700 time:  503.858047246933
+user  800 time:  583.6465005874634
+user  900 time:  666.8397455215454
+user  1000 time:  741.7052347660065
+user  1100 time:  818.3016111850739
+user  1200 time:  889.3676164150238
+user  1300 time:  954.2397620677948
+user  1400 time:  1015.4426352977753
+user  1500 time:  1098.1595129966736
+user  1600 time:  1167.7408337593079
+user  1700 time:  1244.8183813095093
+user  1800 time:  1312.0563251972198
+user  1900 time:  1375.9256126880646
+user  2000 time:  1434.7192146778107
+user  2100 time:  1508.2365927696228
+user  2200 time:  1579.2006590366364
+user  2300 time:  1643.264734506607
+user  2400 time:  1714.0893788337708
+user  2500 time:  1795.5451245307922
+user  2600 time:  1863.4385890960693
+user  2700 time:  1940.9554708003998
+user  2800 time:  2019.2268509864807
+user  2900 time:  2095.5259523391724
+user  3000 time:  2169.4027564525604
+user  3100 time:  2241.5913462638855
+user  3200 time:  2325.956323623657
+user  3300 time:  2411.5372524261475
+user  3400 time:  2485.44517827034
+user  3500 time:  2559.4519324302673
+user  3600 time:  2643.164722919464
+user  3700 time:  2714.8729581832886
+user  3800 time:  2785.056628704071
+user  3900 time:  2866.3151309490204
+user  4000 time:  2949.9743704795837
+user  4100 time:  3023.9931766986847
+user  4200 time:  3110.589592218399
+user  4300 time:  3186.9508459568024
+user  4400 time:  3251.3353385925293
+user  4500 time:  3311.1252868175507
+user  4600 time:  3401.1749937534332
+user  4700 time:  3476.8286638259888
+user  4800 time:  3558.5322291851044
+user  4900 time:  3635.5392785072327
+user  5000 time:  3698.7326922416687
+user  5100 time:  3779.39452958107
+user  5200 time:  3844.589487552643
+user  5300 time:  3920.8025188446045
+user  5400 time:  3988.3503272533417
+user  5500 time:  4066.648265361786
+user  5600 time:  4139.736217021942
+user  5700 time:  4221.786609888077
+user  5800 time:  4284.527275800705
+user  5900 time:  4360.13612985611
+user  6000 time:  4423.18257021904
+user  6100 time:  4491.212526082993
+user  6200 time:  4568.5501317977905
+user  6300 time:  4651.7793571949005
+user  6400 time:  4731.309955358505
+user  6500 time:  4806.5320863723755
+user  6600 time:  4896.248012542725
+user  6700 time:  4970.36027598381
+user  6800 time:  5049.356652021408
+user  6900 time:  5127.734812498093
+user  7000 time:  5186.637287378311
+user  7100 time:  5263.957854986191
+user  7200 time:  5330.790091991425
+user  7300 time:  5403.754057407379
+user  7400 time:  5486.07935500145
+user  7500 time:  5568.9489533901215
+user  7600 time:  5635.033163547516
+user  7700 time:  5704.810200214386
+user  7800 time:  5774.251987218857
+user  7900 time:  5858.8537068367
+user  8000 time:  5938.219549655914
+user  8100 time:  6011.456524610519
+user  8200 time:  6092.036794900894
+user  8300 time:  6163.282150268555
+user  8400 time:  6231.2889568805695
+user  8500 time:  6298.817394733429
+user  8600 time:  6377.903886556625
+user  8700 time:  6463.835021972656
+user  8800 time:  6542.194879055023
+user  8900 time:  6613.778787136078
+user  9000 time:  6690.407124996185
+user  9100 time:  6757.086551904678
+user  9200 time:  6828.597284555435
+start updating user and item embedding...
+user_name:9300
+user  0 time:  3.2901763916015625e-05
+user  100 time:  28.603599786758423
+user  200 time:  57.16354775428772
+user  300 time:  85.40684938430786
+user  400 time:  113.80726766586304
+user  500 time:  142.17506217956543
+user  600 time:  170.24330306053162
+user  700 time:  198.43746948242188
+user  800 time:  226.83534264564514
+user  900 time:  255.18659687042236
+user  1000 time:  283.3775701522827
+user  1100 time:  311.9996612071991
+user  1200 time:  340.17185831069946
+user  1300 time:  368.45113825798035
+user  1400 time:  396.57037806510925
+user  1500 time:  424.8378372192383
+user  1600 time:  453.24412775039673
+user  1700 time:  481.4138057231903
+user  1800 time:  509.6126358509064
+user  1900 time:  537.7664570808411
+user  2000 time:  566.1930253505707
+user  2100 time:  595.1842439174652
+user  2200 time:  625.1995241641998
+user  2300 time:  655.3255753517151
+user  2400 time:  685.2932281494141
+user  2500 time:  714.7978019714355
+user  2600 time:  744.767608165741
+user  2700 time:  771.0899631977081
+user  2800 time:  802.1337752342224
+user  2900 time:  832.304132938385
+user  3000 time:  863.2322134971619
+user  3100 time:  893.2143545150757
+user  3200 time:  923.3618786334991
+user  3300 time:  953.7915019989014
+user  3400 time:  983.9699268341064
+user  3500 time:  1013.9531180858612
+user  3600 time:  1044.1629786491394
+user  3700 time:  1074.1814954280853
+user  3800 time:  1104.1051075458527
+user  3900 time:  1137.7939257621765
+user  4000 time:  1166.7047004699707
+user  4100 time:  1196.740347623825
+user  4200 time:  1223.8113737106323
+user  4300 time:  1251.126746416092
+user  4400 time:  1277.967371225357
+user  4500 time:  1304.417156457901
+user  4600 time:  1332.0116636753082
+user  4700 time:  1358.6056489944458
+user  4800 time:  1385.815351486206
+user  4900 time:  1413.3866505622864
+user  5000 time:  1442.3315935134888
+user  5100 time:  1472.5121488571167
+user  5200 time:  1502.6950252056122
+user  5300 time:  1532.7532267570496
+user  5400 time:  1562.6986923217773
+user  5500 time:  1592.8157584667206
+user  5600 time:  1622.8478817939758
+user  5700 time:  1653.3179893493652
+user  5800 time:  1682.061671257019
+user  5900 time:  1710.2025532722473
+user  6000 time:  1739.9175145626068
+user  6100 time:  1770.015204668045
+user  6200 time:  1800.2422420978546
+user  6300 time:  1830.1948871612549
+user  6400 time:  1856.2278702259064
+user  6500 time:  1886.4693846702576
+user  6600 time:  1916.9208223819733
+user  6700 time:  1947.1434488296509
+user  6800 time:  1977.4288280010223
+user  6900 time:  2007.6853981018066
+user  7000 time:  2034.3716354370117
+user  7100 time:  2061.2354757785797
+user  7200 time:  2087.803605556488
+user  7300 time:  2114.383163690567
+user  7400 time:  2141.2968578338623
+user  7500 time:  2170.4615721702576
+user  7600 time:  2197.6139857769012
+user  7700 time:  2224.4397823810577
+user  7800 time:  2251.2512102127075
+user  7900 time:  2277.95582652092
+user  8000 time:  2305.267700433731
+user  8100 time:  2337.1554713249207
+user  8200 time:  2367.3678109645844
+user  8300 time:  2396.0301978588104
+user  8400 time:  2427.1334087848663
+user  8500 time:  2457.2946751117706
+user  8600 time:  2491.701690196991
+user  8700 time:  2521.9425127506256
+user  8800 time:  2552.1853551864624
+user  8900 time:  2581.3361732959747
+user  9000 time:  2611.536066532135
+user  9100 time:  2641.586388349533
+user  9200 time:  2671.521090745926
+start training recommendation module...
+recommendation_model2.py:59: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
+  fe = F.log_softmax(output)
+epoch: 0, training loss: 591.524742528476, train time: 16549.322120904922
+epoch: 1, training loss: 476.4371916409291, train time: 17954.088468551636
+epoch: 2, training loss: 465.9808890072163, train time: 12731.080902338028
+epoch: 3, training loss: 457.7955064591224, train time: 12750.557504415512
+epoch: 4, training loss: 454.31184083927656, train time: 12769.364953756332
+epoch: 5, training loss: 447.6938212366513, train time: 12733.767775535583
+epoch: 6, training loss: 447.2133089664421, train time: 12567.968326330185
+epoch: 7, training loss: 444.2458561222011, train time: 12899.65993642807
+epoch: 8, training loss: 444.61582508483843, train time: 14421.623599767685
+epoch: 9, training loss: 440.7776389653736, train time: 12582.769352436066
+epoch: 10, training loss: 441.02408318786183, train time: 12592.536094427109
+epoch: 11, training loss: 439.08032544591697, train time: 12573.158746957779
+epoch: 12, training loss: 440.3941421657655, train time: 12589.365073919296
+epoch: 13, training loss: 441.33249486787827, train time: 12762.64364528656
+epoch: 14, training loss: 441.39658902664087, train time: 12781.208261489868
+epoch: 15, training loss: 440.19213742698776, train time: 12733.454292535782
+epoch: 16, training loss: 440.63922523893416, train time: 12751.561743736267
+epoch: 17, training loss: 442.2028381494165, train time: 12809.986733436584
+epoch: 18, training loss: 442.452297773576, train time: 12809.719200134277
+epoch: 19, training loss: 441.6669339427317, train time: 12762.962695360184
+epoch: 20, training loss: 441.07858778582886, train time: 12769.096414089203
+epoch: 21, training loss: 440.3229763068084, train time: 12756.599540948868
+epoch: 22, training loss: 442.54781729046954, train time: 12770.431053638458
+epoch: 23, training loss: 442.7060402279312, train time: 12767.30497288704
+epoch: 24, training loss: 442.6426194131491, train time: 12754.665873527527
+epoch: 25, training loss: 445.30957278292044, train time: 12782.904510259628
+epoch: 26, training loss: 444.2502926803136, train time: 12754.443702936172
+epoch: 27, training loss: 447.77349828512524, train time: 12777.76998257637
+epoch: 28, training loss: 446.2794666625705, train time: 12776.732163667679
+epoch: 29, training loss: 444.7227223603404, train time: 12744.852427482605
+epo:29 | HR@5:0.8896 | HR@10:0.9136 | HR@20:0.9396 | NDCG@5:0.3798 | NDCG@10:0.4259 | NDCG@20:0.4812 | recall@5:0.6175 | recall@10:0.7430 | recall@20:0.7737 | precision@5:0.7409 | precision@10:0.4458 | precision@20:0.2321 | best_HR@5:0.8896 | best_HR@10:0.9136 | best_HR@20:0.9396 | best_NDCG@5:0.3798 | best_NDCG@10:0.4259 | best_NDCG@20:0.4812 | best_recall@5:0.6175 | best_recall@10:0.7430 | best_recall@20:0.7737 | best_precision@5:0.7409 | best_precision@10:0.4458 | best_precision@20:0.2321 | 
+epoch: 30, training loss: 445.1356635571865, train time: 12749.643750190735
+epoch: 31, training loss: 444.3239242736454, train time: 12779.012099266052
+epoch: 32, training loss: 445.0898837715213, train time: 12761.829964637756
+epoch: 33, training loss: 447.03765801683767, train time: 12793.673414945602
+epoch: 34, training loss: 448.5896383517538, train time: 12726.03021645546
+epoch: 35, training loss: 448.69428971479647, train time: 12767.314792871475
+epoch: 36, training loss: 447.18503196680103, train time: 12785.868802547455
+epoch: 37, training loss: 450.1198574777518, train time: 12793.221269130707
+epoch: 38, training loss: 450.23780855344376, train time: 12767.55374455452
+epoch: 39, training loss: 449.74317295409855, train time: 12763.682785987854
+epoch: 40, training loss: 449.02055070511415, train time: 12675.617111206055
+epoch: 41, training loss: 448.70911682318547, train time: 12607.153726100922
+epoch: 42, training loss: 450.95906229902175, train time: 12614.336457014084
+epoch: 43, training loss: 452.96148762252415, train time: 12623.4178378582
+epoch: 44, training loss: 452.61181474031764, train time: 12566.223712205887
+epoch: 45, training loss: 453.3171848670172, train time: 12716.102296590805
+epoch: 46, training loss: 453.4613739027118, train time: 12772.026172876358
+epoch: 47, training loss: 454.562886291882, train time: 12739.654557228088
+epoch: 48, training loss: 454.8663389631838, train time: 12745.393718242645
+epoch: 49, training loss: 454.8686844308977, train time: 12764.24629020691
+epoch: 50, training loss: 453.44338059128495, train time: 12786.666187047958
+epoch: 51, training loss: 457.04243835347006, train time: 12796.311179161072
+epoch: 52, training loss: 457.0306355979701, train time: 12814.91195678711
+epoch: 53, training loss: 456.9261728801648, train time: 12769.797190904617
+epoch: 54, training loss: 458.10423559485935, train time: 12787.992309808731
+epoch: 55, training loss: 458.60844012509915, train time: 12808.676710367203
+epoch: 56, training loss: 459.8316882615618, train time: 12756.130244970322
+epoch: 57, training loss: 457.72025550241233, train time: 12761.62591099739
+epoch: 58, training loss: 459.77328636552556, train time: 12773.48098731041
+epoch: 59, training loss: 458.3293387485319, train time: 12717.8851480484
+epo:59 | HR@5:0.8695 | HR@10:0.8939 | HR@20:0.9224 | NDCG@5:0.3545 | NDCG@10:0.4002 | NDCG@20:0.4564 | recall@5:0.6082 | recall@10:0.7266 | recall@20:0.7580 | precision@5:0.7299 | precision@10:0.4360 | precision@20:0.2274 | best_HR@5:0.8896 | best_HR@10:0.9136 | best_HR@20:0.9396 | best_NDCG@5:0.3798 | best_NDCG@10:0.4259 | best_NDCG@20:0.4812 | best_recall@5:0.6175 | best_recall@10:0.7430 | best_recall@20:0.7737 | best_precision@5:0.7409 | best_precision@10:0.4458 | best_precision@20:0.2321 | 
+epoch: 60, training loss: 463.3145167235343, train time: 12772.52525639534
+epoch: 61, training loss: 461.8179086278833, train time: 12749.269545078278
+epoch: 62, training loss: 460.6674325923086, train time: 12779.207302331924
+epoch: 63, training loss: 459.10125205351505, train time: 12817.932004213333
+epoch: 64, training loss: 459.67632549715927, train time: 12756.167108774185
+epoch: 65, training loss: 460.6631181779376, train time: 12802.101819992065
+epoch: 66, training loss: 460.33769578294596, train time: 12560.82836675644
+epoch: 67, training loss: 460.9997377972177, train time: 12595.6290974617
+epoch: 68, training loss: 461.4306523427367, train time: 12617.176104068756
+epoch: 69, training loss: 460.05625779461116, train time: 12608.582124948502
+epoch: 70, training loss: 459.9961303061282, train time: 12636.500979185104
+epoch: 71, training loss: 463.0072548869066, train time: 12606.980578660965
+epoch: 72, training loss: 461.91429529100424, train time: 12601.451560020447
+epoch: 73, training loss: 460.54551591622294, train time: 12607.218702793121
+epoch: 74, training loss: 457.94999624448246, train time: 12559.684655189514
+epoch: 75, training loss: 459.58050212002127, train time: 12581.62040901184
+epoch: 76, training loss: 459.6504075960838, train time: 12596.654193401337
+epoch: 77, training loss: 459.37252329842886, train time: 12568.497935533524
+epoch: 78, training loss: 458.5124011943408, train time: 12571.599292993546

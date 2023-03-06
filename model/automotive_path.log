@@ -1,0 +1,91 @@
+nohup: ignoring input
+----------------------------------------------------------------------------------------------------
+Amazon_Automotive......
+----------------------------------------------------------------------------------------------------
+Begin to load data
+Load data finished, used time 4.21s
+load pairs finished num =  55200
+uibi
+10000 [9.4569]
+
+20000 [19.1665]
+
+30000 [29.8404]
+
+40000 [40.5644]
+
+50000 [50.9238]
+
+uibici
+10000 [3.4539]
+
+20000 [7.0664]
+
+30000 [10.0857]
+
+40000 [13.3165]
+
+50000 [16.8080]
+
+uici
+10000 [13.4302]
+
+20000 [27.5138]
+
+30000 [42.0812]
+
+40000 [55.2624]
+
+50000 [68.8997]
+
+uicibi
+10000 [0.2725]
+
+20000 [0.5392]
+
+30000 [0.8100]
+
+40000 [1.0771]
+
+50000 [1.3435]
+
+uibi_number=15814
+uici_number=258448
+uibici_number=18543
+uicibi_number=620
+Begin to load data
+############################
+torch.Size([48863, 100])
+Here are 50153 item-item paths in data.
+Load data finished, used time 4.62s
+['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
+ibibi
+outfile name = ../data/Amazon_Automotive/ibibi.paths
+ibici
+outfile name = ../data/Amazon_Automotive/ibici.paths
+ibiui
+outfile name = ../data/Amazon_Automotive/ibiui.paths
+icibi
+outfile name = ../data/Amazon_Automotive/icibi.paths
+icici
+outfile name = ../data/Amazon_Automotive/icici.paths
+iciui
+outfile name = ../data/Amazon_Automotive/iciui.paths
+iuiui
+outfile name = ../data/Amazon_Automotive/iuiui.paths
+icibi_number=4218
+ibici_number=16245
+icici_number=3027
+ibibi_number=0
+iuiui_number=908894
+iciui_number=118030
+ibiui_number=748
+Here are 50153 item-item paths in data.
+0
+3662
+477
+512
+3382
+32609
+50153
+2.4770829923064333

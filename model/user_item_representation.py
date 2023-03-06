@@ -15,11 +15,10 @@ import os
 import pandas as pd
 from collections import defaultdict
 import pickle
-import joblib
 
 #dataset_name = 'Amazon_Musical_Instruments'
-#dataset_name = 'Amazon_Automotive'
-dataset_name = 'Amazon_Toys_Games'
+dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 #dataset_name = 'Amazon_CellPhones_Accessories'
 #dataset_name = 'Amazon_Grocery_Gourmet_Food'
 #dataset_name = 'Amazon_Books'
@@ -37,14 +36,14 @@ if __name__ == '__main__':
 
     folder = f'../data/{dataset_name}/'
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #device = 'cpu'
     print(f'user_item_representation.py device: {device}')
 
     # Writing our model
     class Autoencoder(nn.Module):
-        def __init__(self, d_in=2000, d_hid=800, d_out=embedding_size):
+        def __init__(self, d_in=2000, d_hid=800, d_out=100):
             super(Autoencoder, self).__init__()
 
             self.encoder = nn.Sequential(
@@ -90,13 +89,14 @@ if __name__ == '__main__':
     for _, row in user_item_relation.iterrows():
         adj[user_id2local_id[row[0]], item_id2local_id[row[1]]] = 1.0
     print(f'adj.shape={adj.shape}')
-    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=embedding_size).to(device)
+    model = Autoencoder(d_in=adj.shape[1], d_hid=800, d_out=100).to(device)
     distance = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs = 10
 
     for epoch in range(num_epochs):
         output = model(adj.to(device))
+        print(output.shape)
         loss = distance(output.to(device), adj.to(device))
         optimizer.zero_grad()
         loss.backward()
@@ -110,6 +110,5 @@ if __name__ == '__main__':
         user_item_representation[user] = embeddings[i, :]
 
     #pickle.dump(user_item_representation, open(folder + 'user_item_dic.wv', 'wb'))
-    with open(folder + 'user_item_dic.wv', 'wb') as fo :
-        joblib.dump(user_item_representation,fo)
+    torch.save(user_item_representation,folder + 'user_item_dic.wv')
     print('save done!')

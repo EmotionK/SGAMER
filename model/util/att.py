@@ -122,7 +122,6 @@ class ScaledDotProductAttention(nn.Module):
         if is_gate:
             attn = torch.mul(attn,g_t)
         
-        attn = self.softmax(attn)
         output = torch.bmm(attn, v)
         return output, attn
 
