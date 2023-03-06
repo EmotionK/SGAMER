@@ -35,7 +35,7 @@ def get_user_items_num_data(data,fileFolder):
 
     print(f'over 12 interaction user number:{user_12_number}')
     
-    user_12_number = 8300 #删除即可
+    user_12_number = 10 #删除即可
 
     most_user = c_user.most_common(user_12_number)  # 6793
     select_users = [i[0] for i in most_user]  # 用户列表
