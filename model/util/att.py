@@ -117,7 +117,7 @@ class ScaledDotProductAttention(nn.Module):
         attn = attn / self.temperature
 
         attn = self.softmax(attn)
-        #attn = self.dropout(attn)
+       #attn = self.dropout(attn)
         
         if is_gate:
             attn = torch.mul(attn,g_t)

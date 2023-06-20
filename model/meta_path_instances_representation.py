@@ -76,14 +76,9 @@ def instance_emb(metapath_file, output_file):
     pickle.dump(ui_path_vectors, open(output_file, 'wb'))
 
 
-#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Musical_Instruments'
 #dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_Toys_Games'
-dataset_name = 'Amazon_Musical_Instruments_simple'
-#dataset_name = 'Amazon_CellPhones_Accessories'
-#dataset_name = 'Amazon_Grocery_Gourmet_Food'
-#dataset_name = 'Amazon_Books'
-#dataset_name = 'Amazon_CDs_Vinyl'
 
 
 if __name__ == '__main__':

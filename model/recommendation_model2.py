@@ -15,6 +15,8 @@ from model.util.att import *
 from model.util.data_utils import *
 import pickle
 
+torch.backends.cudnn.enabled = False
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #device = 'cpu'
 print(f'run.py device: {device}')
@@ -24,6 +26,10 @@ att_size = embedding_size
 latent_size = embedding_size
 negative_num = 100
 user_n_items = 4 # for each user, it has n items
+
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
 
 class Recommendation(nn.Module):
     def __init__(self, in_features):
@@ -274,28 +280,6 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item())
 
-            if i%6 == 0:
-                recall_scores = scores
-            else:
-                recall_scores.append(scores[-1])
-            if i%6 == 5:
-                s1 = np.array(recall_scores)
-                sorted_s1 = np.argsort(-s1)
-
-                recall_score_5 = recall_score_fun(sorted_s1[:5])
-                recall_score_10 = recall_score_fun(sorted_s1[:10])
-                recall_score_20 = recall_score_fun(sorted_s1[:20])
-                recall_score_total_5 += recall_score_5
-                recall_score_total_10 += recall_score_10
-                recall_score_total_20 += recall_score_20
-
-                precision_score_5 = precision_score_fun(sorted_s1[:5])
-                precision_score_10 = precision_score_fun(sorted_s1[:10])
-                precision_score_20 = precision_score_fun(sorted_s1[:20])
-                precision_score_total_5 += precision_score_5
-                precision_score_total_10 += precision_score_10
-                precision_score_total_20 += precision_score_20
-
             normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
             pos_id = len(scores) - 1
             s = np.array(scores)
@@ -368,6 +352,8 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
         if best_hit_1 < hit_rate_1:
             best_hit_1 = hit_rate_1
         if best_hit_5 < hit_rate_5:
+            #print('保存模型')
+            #torch.save(recommendation,f'./verify/{dataset_name}_recommendation.model')
             best_hit_5 = hit_rate_5
         if best_ndcg_1 < all_ndcg_1:
             best_ndcg_1 = all_ndcg_1
@@ -402,47 +388,23 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
               f"NDCG@10:{all_ndcg_10:.4f} | "
               f"NDCG@20:{all_ndcg_20:.4f} | "
 
-              f"recall@5:{recall_score_avg_5:.4f} | "
-              f"recall@10:{recall_score_avg_10:.4f} | "
-              f"recall@20:{recall_score_avg_20:.4f} | "
-
-              f"precision@5:{precision_score_avg_5:.4f} | "
-              f"precision@10:{precision_score_avg_10:.4f} | "
-              f"precision@20:{precision_score_avg_20:.4f} | "
-
               f"best_HR@5:{best_hit_5:.4f} | "
               f"best_HR@10:{best_hit_10:.4f} | "
               f"best_HR@20:{best_hit_20:.4f} | "
 
               f"best_NDCG@5:{best_ndcg_5:.4f} | "
               f"best_NDCG@10:{best_ndcg_10:.4f} | "
-              f"best_NDCG@20:{best_ndcg_20:.4f} | "
-
-              f"best_recall@5:{best_recall_5:.4f} | "
-              f"best_recall@10:{best_recall_10:.4f} | "
-              f"best_recall@20:{best_recall_20:.4f} | "
-
-              f"best_precision@5:{best_precision_5:.4f} | "
-              f"best_precision@10:{best_precision_10:.4f} | "
-              f"best_precision@20:{best_precision_20:.4f} | ")
+              f"best_NDCG@20:{best_ndcg_20:.4f} | ")
     print('training finish')
 
 
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
-    #dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
-    dataset_name = 'Amazon_Toys_Games'
-    #dataset_name = 'Amazon_CellPhones_Accessories'
-    #dataset_name = 'Amazon_Grocery_Gourmet_Food'
-    #dataset_name = 'Amazon_Books'
-    #dataset_name = 'Amazon_CDs_Vinyl'
-
     print('-'*100)
     print(f'{dataset_name}......')
     print('-'*100)
 
-    user_number = 9300
+    user_number = 1450
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -599,8 +561,8 @@ if __name__ == '__main__':
             last_item_att = ii_2
         sequence_concat.append(torch.cat([user_sequence_concat[i] for i in range(0, user_n_items - 1)], 0))
     sequence_tensor = torch.stack(sequence_concat)
-    #sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
-    #pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
+    sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
+    pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
 
     # 4. recommendation
     print('start training recommendation module...')

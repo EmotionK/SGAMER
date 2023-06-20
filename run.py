@@ -12,14 +12,9 @@ from data_processing import data_processing
 
 base_path = os.getcwd() + '/' #获取当前路径
 
-#dataset_name = 'Amazon_Musical_Instruments'
+dataset_name = 'Amazon_Musical_Instruments'
 #dataset_name = 'Amazon_Automotive'
 #dataset_name ='Amazon_Toys_Games'
-dataset_name = 'Amazon_Musical_Instruments_simple'
-#dataset_name = 'Amazon_CellPhones_Accessories'
-#dataset_name = 'Amazon_Grocery_Gourmet_Food'
-#dataset_name = 'Amazon_Books'
-#dataset_name = 'Amazon_CDs_Vinyl'
 
 print(f'{dataset_name} data processing.....')
 user_number,item_number,category_number,brand_number = data_processing(dataset_name)

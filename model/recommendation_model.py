@@ -15,6 +15,8 @@ from model.util.att import *
 from model.util.data_utils import *
 import pickle
 
+torch.backends.cudnn.enabled = False
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #device = 'cpu'
 print(f'run.py device: {device}')
@@ -24,6 +26,12 @@ att_size = embedding_size
 latent_size = embedding_size
 negative_num = 100
 user_n_items = 4 # for each user, it has n items
+
+flag = 'recommendation_drop'
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
+#dataset_name = 'Amazon_Toys_Games'
+
 
 class Recommendation(nn.Module):
     def __init__(self, in_features):
@@ -51,7 +59,7 @@ class Recommendation(nn.Module):
         :return:
         """
         x, weights = self.attention1(item_emb, sequence_emb) 
-        #output = self.dropout(x)
+        #x = self.dropout(x)
         output = F.linear(x, self.weight, self.bias)
         #output = self.dropout(output)
         a, b, c = output.shape
@@ -65,9 +73,11 @@ class AuxiliaryNet(torch.nn.Module):
         self.att = Self_Attention_Network(user_item_dim=embedding_size,num_heads=1).to(device)
         self.aux_linear = nn.Linear(embedding_size,1)
         self.sigmoid = torch.nn.Sigmoid()
+        self.dropout = torch.nn.Dropout(p=0.1)
 
     def forward(self,input_tensor,is_train=True):
         out,weight = self.att(slf_att_input=input_tensor)
+        #out = self.dropout(out)
         out_linear = self.aux_linear(out)
         p_t = self.sigmoid(out_linear)
 
@@ -84,28 +94,45 @@ class AuxiliaryNet(torch.nn.Module):
 
         one = torch.ones_like(g_t)
         zero = torch.zeros_like(g_t)
-        g_t = torch.where(g_t>0.3,one,zero)
+        g_t = torch.where(g_t>0.2,one,zero)
 
         return g_t
 
 class GRU(nn.Module):
-    def __init__(self, user_item_dim,input_tensor):
+    def __init__(self, user_item_dim, input_tensor):
         super(GRU, self).__init__()
+
         self.auxiliary = AuxiliaryNet(input_tensor.shape[1]).to(device)
         self.instances_slf_att = Self_Attention_Network(user_item_dim=user_item_dim).to(device)
-        self.instances_gru = torch.nn.GRU(input_size=user_item_dim,hidden_size=user_item_dim,num_layers=1,batch_first=True).to(device)
-       
-    def forward(self,input_tensor):
-        g_t = self.auxiliary(input_tensor.to(device))
+        self.dropout = torch.nn.Dropout(p=0.1)
+        self.instances_gru = torch.nn.GRU(input_size=100, hidden_size=100, num_layers=1, batch_first=True).to(device)
+
+    def forward(self, input_tensor):
         
-        r_out, h_state = self.instances_gru(input_tensor.to(device))
-        #out,weight = self.instances_slf_att(r_out.to(device))
-        out,weight = self.instances_slf_att(r_out.to(device),g_t,is_gate=True)
-        return out,weight
+        out, h_state = self.instances_gru(input_tensor.to(device))
+        #out = self.dropout(out)
+        g_t = self.auxiliary(input_tensor.to(device))
+        out, weight = self.instances_slf_att(out.to(device), g_t, is_gate=True)
+        
+        return out
+
+def item_sequence_attention(input_tensor):
+    instances_slf_att = GRU(user_item_dim=latent_size, input_tensor=input_tensor).to(device)
+    distance_slf_att = nn.MSELoss()
+    optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
+    num_epochs_slf_att = 50
+    for epoch in range(num_epochs_slf_att):
+        output = instances_slf_att(input_tensor.to(device))
+        loss_slf = distance_slf_att(output.to(device), input_tensor.to(device)).to(device)
+        optimizer_slf_att.zero_grad()
+        loss_slf.backward()
+        optimizer_slf_att.step()
+    slf_att_embeddings = output.detach().cpu().numpy()
+    torch.cuda.empty_cache()
+    return slf_att_embeddings
 
 def instances_slf_att(input_tensor):
-    #instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
-    instances_slf_att = GRU(user_item_dim=latent_size,input_tensor=input_tensor).to(device)
+    instances_slf_att = Self_Attention_Network(user_item_dim=latent_size).to(device)
     distance_slf_att = nn.MSELoss()
     optimizer_slf_att = torch.optim.Adam(instances_slf_att.parameters(), lr=0.01, weight_decay=0.00005)
     num_epochs_slf_att = 50
@@ -144,37 +171,15 @@ def item_attention(item_input, ii_path):
     torch.cuda.empty_cache()
     return att_embeddings
 
-def recall_score_fun(getItems):
-    hit = 0.0
-    for item in range(101,107):
-        if item in getItems:
-            hit += 1
-    return hit/6
-
-def precision_score_fun(getItems):
-    hit = 0.0
-    for item in range(101,107):
-        if item in getItems:
-            hit += 1
-    return hit/len(getItems)
-
-def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
-    best_hit_1 = 0.0
+def rec_net(train_loader, test_loader, node_emb, sequence_tensor):
     best_hit_5 = 0.0
     best_hit_10 = 0.0
     best_hit_20 = 0.0
-    best_hit_50 = 0.0
-    best_ndcg_1 = 0.0
+    
     best_ndcg_5 = 0.0
     best_ndcg_10 = 0.0
     best_ndcg_20 = 0.0
-    best_ndcg_50 = 0.0
-    best_recall_5 = 0.0
-    best_recall_10 = 0.0
-    best_recall_20 = 0.0
-    best_precision_5 = 0.0
-    best_precision_10 = 0.0
-    best_precision_20 = 0.0
+    
     all_pos = []
     all_neg = []
     test_data.numpy()
@@ -221,26 +226,14 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
 
         testing_start_time = time.time()
 
-        hit_num_1 = 0
         hit_num_5 = 0
         hit_num_10 = 0
         hit_num_20 = 0
-        hit_num_50 = 0
-        all_ndcg_1 = 0
+        
         all_ndcg_5 = 0
         all_ndcg_10 = 0
         all_ndcg_20 = 0
-        all_ndcg_50 = 0
 
-        recall_score_total_5 = 0.0
-        recall_score_total_10 = 0.0
-        recall_score_total_20 = 0.0
-
-        precision_score_total_5 = 0.0
-        precision_score_total_10 = 0.0
-        precision_score_total_20 = 0.0
-
-        recall_scores = []   
         for i, u_v_p in enumerate(all_pos):
             start = N * i
             end = N * i + N
@@ -257,125 +250,58 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
                 score = recommendation(this_item_emb, this_sequence_tensor)[:, -1].to(device)
                 scores.append(score.item())
 
-            if i%6 == 0:
-                recall_scores = scores
-            else:
-                recall_scores.append(scores[-1])
-            if i%6 == 5:
-                s1 = np.array(recall_scores)
-                sorted_s1 = np.argsort(-s1)
-
-                recall_score_5 = recall_score_fun(sorted_s1[:5])
-                recall_score_10 = recall_score_fun(sorted_s1[:10])
-                recall_score_20 = recall_score_fun(sorted_s1[:20])
-                recall_score_total_5 += recall_score_5
-                recall_score_total_10 += recall_score_10
-                recall_score_total_20 += recall_score_20
-
-                precision_score_5 = precision_score_fun(sorted_s1[:5])
-                precision_score_10 = precision_score_fun(sorted_s1[:10])
-                precision_score_20 = precision_score_fun(sorted_s1[:20])
-                precision_score_total_5 += precision_score_5
-                precision_score_total_10 += precision_score_10
-                precision_score_total_20 += precision_score_20
-
             normalized_scores = [((u_i_score - min(scores)) / (max(scores) - min(scores))) for u_i_score in scores]
             pos_id = len(scores) - 1
             s = np.array(scores)
             sorted_s = np.argsort(-s)
 
-            if sorted_s[0] == pos_id:
-                hit_num_1 += 1
+            if pos_id in sorted_s[0:5]:
                 hit_num_5 += 1
                 hit_num_10 += 1
                 hit_num_20 += 1
-                hit_num_50 += 1
-            elif pos_id in sorted_s[1:5]:
-                hit_num_5 += 1
-                hit_num_10 += 1
-                hit_num_20 += 1
-                hit_num_50 += 1
             elif pos_id in sorted_s[5:10]:
                 hit_num_10 += 1
                 hit_num_20 += 1
-                hit_num_50 += 1
             elif pos_id in sorted_s[10:20]:
                 hit_num_20 += 1
-                hit_num_50 += 1
-            elif pos_id in sorted_s[20:50]:
-                hit_num_50 += 1
-            ndcg_1 = ndcg_at_k(normalized_scores, 1, 0)
+            
             ndcg_5 = ndcg_at_k(normalized_scores, 5, 0)
             ndcg_10 = ndcg_at_k(normalized_scores, 10, 0)
             ndcg_20 = ndcg_at_k(normalized_scores, 20, 0)
-            ndcg_50 = ndcg_at_k(normalized_scores, 50, 0)
-            all_ndcg_1 += ndcg_1
+            
             all_ndcg_5 += ndcg_5
             all_ndcg_10 += ndcg_10
             all_ndcg_20 += ndcg_20
-            all_ndcg_50 += ndcg_50
+        
         all_pos_num = len(all_pos)
-        hit_rate_1 = hit_num_1 / all_pos_num
+        
         hit_rate_5 = hit_num_5 / all_pos_num
         hit_rate_10 = hit_num_10 / all_pos_num
         hit_rate_20 = hit_num_20 / all_pos_num
-        hit_rate_50 = hit_num_50 / all_pos_num
-        all_ndcg_1 = all_ndcg_1 / all_pos_num
+        
         all_ndcg_5 = all_ndcg_5 / all_pos_num
         all_ndcg_10 = all_ndcg_10 / all_pos_num
         all_ndcg_20 = all_ndcg_20 / all_pos_num
-        all_ndcg_50 = all_ndcg_50 / all_pos_num
 
-        recall_score_avg_5 = recall_score_total_5/user_number
-        recall_score_avg_10 = recall_score_total_10/user_number
-        recall_score_avg_20 = recall_score_total_20/user_number
-
-        precision_score_avg_5 = precision_score_total_5/user_number
-        precision_score_avg_10 = precision_score_total_10/user_number
-        precision_score_avg_20 = precision_score_total_20/user_number
-
-        if best_recall_5 < recall_score_avg_5:
-            best_recall_5 = recall_score_avg_5
-        if best_recall_10 < recall_score_avg_10:
-            best_recall_10 = recall_score_avg_10
-        if best_recall_20 < recall_score_avg_20:
-            best_recall_20 = recall_score_avg_20
-
-        if best_precision_5 < precision_score_avg_5:
-            best_precision_5 = precision_score_avg_5
-        if best_precision_10 < precision_score_avg_10:
-            best_precision_10 = precision_score_avg_10
-        if best_precision_20 < precision_score_avg_20:
-            best_precision_20 = precision_score_avg_20
-
-        if best_hit_1 < hit_rate_1:
-            best_hit_1 = hit_rate_1
         if best_hit_5 < hit_rate_5:
+            print('保存hit模型')
+            torch.save(recommendation,f'./verify/{dataset_name}/recommendation_hit_{flag}.model')
             best_hit_5 = hit_rate_5
-        if best_ndcg_1 < all_ndcg_1:
-            best_ndcg_1 = all_ndcg_1
         if best_hit_10 < hit_rate_10:
             best_hit_10 = hit_rate_10
         if best_hit_20 < hit_rate_20:
             best_hit_20 = hit_rate_20
-        if best_hit_50 < hit_rate_50:
-            best_hit_50 = hit_rate_50
         if best_ndcg_5 < all_ndcg_5:
+            print('保存ndcg模型')
+            torch.save(recommendation,f'./verify/{dataset_name}/recommendation_ndcg_{flag}.model')
             best_ndcg_5 = all_ndcg_5
         if best_ndcg_10 < all_ndcg_10:
             best_ndcg_10 = all_ndcg_10
         if best_ndcg_20 < all_ndcg_20:
             best_ndcg_20 = all_ndcg_20
-        if best_ndcg_50 < all_ndcg_50:
-            best_ndcg_50 = all_ndcg_50
 
         testing_time = time.time() - testing_start_time
-        """print(f"epo:{epoch}|"
-              f"HR@1:{hit_rate_1:.4f} | HR@5:{hit_rate_5:.4f} | HR@10:{hit_rate_10:.4f} | HR@20:{hit_rate_20:.4f} | HR@50:{hit_rate_50:.4f} |"
-              f" NDCG@1:{all_ndcg_1:.4f} | NDCG@5:{all_ndcg_5:.4f} | NDCG@10:{all_ndcg_10:.4f}| NDCG@20:{all_ndcg_20:.4f}| NDCG@50:{all_ndcg_50:.4f}|"
-              f" best_HR@1:{best_hit_1:.4f} | best_HR@5:{best_hit_5:.4f} | best_HR@10:{best_hit_10:.4f} | best_HR@20:{best_hit_20:.4f} | best_HR@50:{best_hit_50:.4f} |"
-              f" best_NDCG@1:{best_ndcg_1:.4f} | best_NDCG@5:{best_ndcg_5:.4f} | best_NDCG@10:{best_ndcg_10:.4f} | best_NDCG@20:{best_ndcg_20:.4f} | best_NDCG@50:{best_ndcg_50:.4f} |"
-              f" train_time:{train_time:.2f} | test_time:{testing_time:.2f}")"""
+        
         print(f"epo:{epoch} | "
               f"HR@5:{hit_rate_5:.4f} | "
               f"HR@10:{hit_rate_10:.4f} | "
@@ -385,48 +311,23 @@ def rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor):
               f"NDCG@10:{all_ndcg_10:.4f} | "
               f"NDCG@20:{all_ndcg_20:.4f} | "
 
-              f"recall@5:{recall_score_avg_5:.4f} | "
-              f"recall@10:{recall_score_avg_10:.4f} | "
-              f"recall@20:{recall_score_avg_20:.4f} | "
-
-              f"precision@5:{precision_score_avg_5:.4f} | "
-              f"precision@10:{precision_score_avg_10:.4f} | "
-              f"precision@20:{precision_score_avg_20:.4f} | "
-
               f"best_HR@5:{best_hit_5:.4f} | "
               f"best_HR@10:{best_hit_10:.4f} | "
               f"best_HR@20:{best_hit_20:.4f} | "
 
               f"best_NDCG@5:{best_ndcg_5:.4f} | "
               f"best_NDCG@10:{best_ndcg_10:.4f} | "
-              f"best_NDCG@20:{best_ndcg_20:.4f} | "
+              f"best_NDCG@20:{best_ndcg_20:.4f} | ")
 
-              f"best_recall@5:{best_recall_5:.4f} | "
-              f"best_recall@10:{best_recall_10:.4f} | "
-              f"best_recall@20:{best_recall_20:.4f} | "
-
-              f"best_precision@5:{best_precision_5:.4f} | "
-              f"best_precision@10:{best_precision_10:.4f} | "
-              f"best_precision@20:{best_precision_20:.4f} | ")
     print('training finish')
 
 
 if __name__ == '__main__':
 #def recommendation_model(dataset_name):
-    #dataset_name = 'Amazon_Musical_Instruments'
-    #dataset_name = 'Amazon_Automotive'
-    #dataset_name = 'Amazon_Toys_Games'
-    dataset_name = 'Amazon_Musical_Instruments_simple'
-    #dataset_name = 'Amazon_CellPhones_Accessories'
-    #dataset_name = 'Amazon_Grocery_Gourmet_Food'
-    #dataset_name = 'Amazon_Books'
-    #dataset_name = 'Amazon_CDs_Vinyl'
-
     print('-'*100)
     print(f'{dataset_name}......')
     print('-'*100)
 
-    user_number = 10
     folder = f'../data/{dataset_name}/'
 
     # split train and test data
@@ -459,8 +360,9 @@ if __name__ == '__main__':
     ii_metapaths_list = ['ibibi', 'ibici', 'ibiui', 'icibi', 'icici', 'iciui', 'iuiui']
     
     user_item_direct_emb_file = folder + 'user_item_dic.wv'
-    user_item_direct_emb = pickle.load(open(user_item_direct_emb_file,'rb'))
-    
+    #user_item_direct_emb = pickle.load(open(user_item_direct_emb_file,'rb'))
+    user_item_direct_emb = torch.load(user_item_direct_emb_file)
+
     item_item_direct_emb_file = folder + 'item_item.wv'
     item_item_direct_emb = load_item_item_wv(item_item_direct_emb_file)
     
@@ -541,11 +443,25 @@ if __name__ == '__main__':
         user_sequence_concat = defaultdict()
         this_user_ui_paths_dic = ui_paths_att_emb[u]
         this_user_ii_paths_dic = ii_paths_att_emb[u]
+        
+        
+        # gru和门控网络
+        user_item_sequence = []
+        for item_id in ui_dict[u]:
+            user_item_sequence.append(node_emb[item_id])
+        user_item_sequence = torch.Tensor([item.numpy() for item in user_item_sequence]) # user_item_sequence=torch.Size([12, 100])
+        user_item_sequence = user_item_sequence.unsqueeze(0)
+        output = item_sequence_attention(user_item_sequence).squeeze() 
+        
+        
         # for user uid, item1
         u_emb = node_emb[u].reshape((1, -1)).to(device)
         i1_id = ui_dict[u][0]
         u_i1_emb = this_user_ui_paths_dic[(u, i1_id)].reshape((1, -1)).to(device)
-        item1_emb = node_emb[i1_id].reshape((1, -1))
+        
+        #item1_emb = node_emb[i1_id].reshape((1, -1))
+        item1_emb = torch.Tensor(output[0].reshape((1, -1)))
+        
         # input: u_i1_emb, item1_emb   after attention: the same dimension
         item1_att = item_attention(item1_emb, u_i1_emb.unsqueeze(0)).reshape((1, -1))
         item1_att = torch.from_numpy(item1_att).to(device)
@@ -559,14 +475,17 @@ if __name__ == '__main__':
             item_att_input = this_user_ii_paths_dic[(i1, i2)].unsqueeze(0)
             ii_1 = item_attention(last_item_att, item_att_input).reshape((1, -1))
             ii_1 = torch.from_numpy(ii_1).to(device)
-            ii_2 = item_attention(node_emb[i2].unsqueeze(0), item_att_input).reshape((1, -1))
+            
+            #ii_2 = item_attention(node_emb[i2].unsqueeze(0), item_att_input).reshape((1, -1))
+            ii_2 = item_attention(torch.Tensor(output[i_index].reshape((1, -1))), item_att_input).reshape((1, -1))
+
             ii_2 = torch.from_numpy(ii_2).to(device)
             user_sequence_concat[i_index] = torch.cat([u_emb, ii_1, ii_2], dim=0)
             last_item_att = ii_2
         sequence_concat.append(torch.cat([user_sequence_concat[i] for i in range(0, user_n_items - 1)], 0))
     sequence_tensor = torch.stack(sequence_concat)
-    #sequence_tensor_pkl_name =  folder + str(negative_num) + '_sequence_tensor.pkl'
-    #pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
+    sequence_tensor_pkl_name =  f'./verify/{dataset_name}/sequence_tensor_{flag}.pkl'
+    pickle.dump(sequence_tensor, open(sequence_tensor_pkl_name, 'wb'))
 
     # 4. recommendation
     print('start training recommendation module...')
@@ -587,4 +506,4 @@ if __name__ == '__main__':
         shuffle=False,  #
         num_workers=1,  #
     )
-    rec_net(user_number,train_loader, test_loader, node_emb, sequence_tensor)
+    rec_net(train_loader, test_loader, node_emb, sequence_tensor)

@@ -186,7 +186,7 @@ class UIPath:
                 cc = c[0]
                 if ii in self.ic_dict and cc in self.ic_dict[ii] and ii != e_i:
                     sim = i[1]
-                    if sim>0.5:
+                    if sim>similarity:
                         ic_list.append([ii, cc, sim])
         ic_list.sort(key=lambda x: x[2], reverse=True)
         ic_list = ic_list[:min(5, len(ic_list))]
@@ -223,7 +223,7 @@ class UIPath:
                 bb = b[0]
                 if ii in self.ib_dict and bb in self.ib_dict[ii] and ii != e_i:
                     sim = i[1]
-                    if sim>0.5:
+                    if sim>similarity:
                         ib_list.append([ii, bb, sim])
         ib_list.sort(key=lambda x: x[2], reverse=True)
         ib_list = ib_list[:min(5, len(ib_list))]
@@ -902,7 +902,8 @@ def embedding_to_index(folder,dataset_name):
     pickle.dump(node_embedding_dic,open(f'{folder}/node_embedding.dic','wb'))
 
 embedding_size = 100
-choose_dataset = 3
+choose_dataset = 1
+similarity = 0.9
 
 if choose_dataset == 1:
     dataset_name = 'Amazon_Musical_Instruments'    

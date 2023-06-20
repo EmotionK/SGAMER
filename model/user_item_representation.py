@@ -16,13 +16,9 @@ import pandas as pd
 from collections import defaultdict
 import pickle
 
-#dataset_name = 'Amazon_Musical_Instruments'
-dataset_name = 'Amazon_Automotive'
+dataset_name = 'Amazon_Musical_Instruments'
+#dataset_name = 'Amazon_Automotive'
 #dataset_name = 'Amazon_Toys_Games'
-#dataset_name = 'Amazon_CellPhones_Accessories'
-#dataset_name = 'Amazon_Grocery_Gourmet_Food'
-#dataset_name = 'Amazon_Books'
-#dataset_name = 'Amazon_CDs_Vinyl'
 
 
 embedding_size = 100
@@ -96,7 +92,7 @@ if __name__ == '__main__':
 
     for epoch in range(num_epochs):
         output = model(adj.to(device))
-        print(output.shape)
+        print('1111>>>>>',output.shape)
         loss = distance(output.to(device), adj.to(device))
         optimizer.zero_grad()
         loss.backward()
