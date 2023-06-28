@@ -1,9 +1,9 @@
 # SGAMER
 1. 如果你只是想验证该模型在数据集**Amazon Musical Instruments**上的结果，只需要运行以下的命令：
->'''
->cd model
->python recommendation.py
->'''
+'''
+>>cd model
+>>python recommendation.py
+'''
 3. 如果你想重新训练该模型，可以按照以下步骤执行：
 数据准备
 1. 相关数据集可以在Amazon中下载，主要下载"metadata"和"ratings only"两个文件
